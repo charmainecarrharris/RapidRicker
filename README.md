@@ -27,12 +27,12 @@ To install this package directly from github, use
 ```
 install.packages("devtools") # Install the devtools package
 library(devtools) # Load the devtools package.
-install_github("SOLV-Code/RapidRicker", 
-				dependencies = TRUE,
+install_github("SOLV-Code/RapidRicker", dependencies = TRUE,
                 build_vignettes = FALSE)
 library(RapidRicker)		
 
 # check the built in data set
+
 ?SR_Sample # opens help file
 head(SR_Sample) # shows the first few rows
 
