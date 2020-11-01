@@ -4,18 +4,18 @@
 #' Also calculates standard biological benchmarks (Smsy, Seq, Smax, Umsy). Benchmark calculations were adapted from BUGS code used in Miller & Pestal (2020), available \href{https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2020/2020_035-eng.pdf}{here}.
 #' Two versions for some BM are produced: "_h" = Hilborn Proxy (\href{https://cdnsciencepub.com/doi/pdf/10.1139/f85-230}{Hilborn 1985}) and "_p" = Peterman Proxy" (\href{https://cdnsciencepub.com/doi/pdf/10.1139/f99-204}{Peterman et al. 2000}).
 #' @param sr_obj a data frame with Year and Spn, logRpS (Data for 1 Stock!). Other variables can be there but are not used (RpS, Qual, ExpF etc)
-#' @param min.n min number of S-R pairs needed to fit a model
+#' @param min.obs min number of S-R pairs needed to fit a model
 #' @keywords Ricker fit, Smsy, Smax, Seq, Umsy
 #' @export
 #' @examples
 #' ricker.bm <- calcDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],min.obs = 10)
 #' print(ricker.bm)
 
-calcDetRickerBM <- function(sr_obj,min.n=15){
+calcDetRickerBM <- function(sr_obj,min.obs=15){
 
 sr.use  <- sr_obj %>% dplyr::filter(!is.na(logRpS),!is.na(Spn))
 
-if(dim(sr.use)[1] >= min.n){
+if(dim(sr.use)[1] >= min.obs){
 
 ricker.fit <- lm(sr.use$logRpS ~ sr.use$Spn)
 ricker.sigma <- sigma(ricker.fit)
@@ -55,10 +55,10 @@ out.vec <-  c(
 			Umsy_p = round(as.vector(U.msy.p),2)
 			)
 
-} # if n >= min.n
+} # if n >= min.obs
 
 
-if(dim(sr.use)[1] < min.n){
+if(dim(sr.use)[1] < min.obs){
 
 out.vec <-  c(n_obs = dim(sr.use)[1],
 			ln_a = NA,
