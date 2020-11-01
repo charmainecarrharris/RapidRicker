@@ -4,12 +4,12 @@
 \alias{testDetRickerBM}
 \title{testDetRickerBM}
 \usage{
-testDetRickerBM(sr_obj, min.n = 15, type = "jack", trace = FALSE)
+testDetRickerBM(sr_obj, min.obs = 15, type = "jack", trace = FALSE)
 }
 \arguments{
 \item{sr_obj}{a data frame with Year and Spn, logRpS (Data for 1 Stock!). Other variables can be there but are not used (RpS, Qual, ExpF etc).}
 
-\item{min.n}{min number of S-R pairs needed to fit a model}
+\item{min.obs}{min number of S-R pairs needed to fit a model}
 
 \item{type}{one of "jack" (for a drop 1 jackknife test), "retro" (retrospective test starting with min.obs, then adding more years), or "revretro" (reverse retrospective, starting with all years and them dropping the earlier obs one at a time until only the most recent min.obs are left).}
 

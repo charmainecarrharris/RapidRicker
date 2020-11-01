@@ -53,9 +53,23 @@ head(SR_Sample) # shows the first few rows
 
 ```
 library(RapidRicker)
+library(tidyverse) # not sure why this isn't handled in the dependencies?
+
+data.chk <- checkSRData(SR_Sample[SR_Sample$Stock == "Stock1",])
+names(data.chk)
+print(data.chk$Summary)
+print(head(data.chk$Data))
 
 
+# NOTE: build logRpS into the data file, and help file etc.
+ricker.bm <- calcDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",] %>%
+                             mutate(logRpS = log(Rec/Spn)),min.obs = 10)
+print(ricker.bm)
 
+ricker.test <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",]%>%
+                                 mutate(logRpS = log(Rec/Spn)),
+                               min.obs= 10,  type="retro")
+print(ricker.test)
 
 
 
