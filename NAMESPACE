@@ -2,4 +2,5 @@
 
 export(calcDetRickerBM)
 export(checkSRData)
+export(spark.line)
 export(testDetRickerBM)
