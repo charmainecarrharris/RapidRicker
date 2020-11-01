@@ -86,6 +86,51 @@ ricker.revretro <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],
 print(head(ricker.revretro))
 
 
+# Plot examples
+
+# add a new col, for easier plotting
+SR_Sample[["RpS"]] <- exp(SR_Sample$logRpS)
+
+
+# single plot
+spark.line(SR_Sample[SR_Sample$Stock == "Stock1",c("Year","Spn")],avg=4,type = "o",cex=0.5)
+title(main = "Stock1")
+
+
+# sparkline handout
+pdf(file = "RapidRicker_SamplePlots_sparklines.pdf", onefile= TRUE, height = 8.5, width =11)
+
+xlim <- range(SR_Sample$Year)
+
+
+layout(matrix(c(rep(0,5),1:25),ncol=5,byrow=TRUE),heights = c(0.5,2,2,2,2,2))
+par(mai = c(0.3,0.2,0.2,0.2))
+#layout.show(25)
+
+for(stk in sort(unique(SR_Sample$Stock))){
+  spark.line(SR_Sample[SR_Sample$Stock == stk,c("Year","Spn")],avg=4,type = "o",cex=0.5,x.lim = xlim)
+  title(main = stk)
+}
+
+title(main = "Spn", outer = TRUE, line = -2,cex.main =2, col.main = "darkblue")
+
+
+
+layout(matrix(c(rep(0,5),1:25),ncol=5,byrow=TRUE),heights = c(0.5,2,2,2,2,2))
+par(mai = c(0.3,0.2,0.2,0.2))
+#layout.show(25)
+rps.range <- range(SR_Sample$RpS,na.rm=TRUE)
+
+for(stk in sort(unique(SR_Sample$Stock))){
+  spark.line(SR_Sample[SR_Sample$Stock == stk,c("Year","RpS")],avg=4,type = "o",cex=0.5,x.lim = xlim,
+             y.lim = c(0,25),ref.line = (c(1,5,10)))
+  title(main = stk)
+}
+
+title(main = "Rec/Spn", outer = TRUE, line = -2,cex.main =2, col.main = "darkblue")
+
+
+dev.off()
 
 
 

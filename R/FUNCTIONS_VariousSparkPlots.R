@@ -25,6 +25,23 @@ n.vals <- sum(!is.na(x[,2]))
 if(n.vals >0){ #plot only if have data
 
 
+# fill in missing years in input with NA (to avoid plotting issues)
+
+yrs.vec <- min(x$Year):max(x$Year)
+missing.yrs <- yrs.vec[!(yrs.vec %in% x$Year)] 
+
+if(length(missing.yrs)>0){
+
+yrs.fill <- data.frame(Year = missing.yrs, Value = NA) 
+names(yrs.fill) <- names(x)
+
+x <- rbind(x,yrs.fill) %>% arrange(Year)
+
+#print(x)
+
+}
+
+
 if(is.null(x.lim)){x.lim <- range(x[,1],na.rm=TRUE)}
 if(is.null(y.lim)){
             if(sum(!is.na(x[,2]))>0){y.lim <- range(x[,2],na.rm=TRUE)}
