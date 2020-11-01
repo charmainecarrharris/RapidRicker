@@ -1,109 +1,114 @@
-# NOTE: Helper Functions at the end
+#' checkSRData
+#'
+#' This function calculates a set of diagnostics for the spawner-recruit data. Some apply to the whole series 
+#'  (e.g. the contrast is spawner estimates), while others flag individual observations
+#'  (e.g. R/S above user-specified plausible upper bound, pointing to a potential data error in either R or S).
+#' @param sr_obj  a data frame with  Year, Spn, Rec, and optionally SpnExp and RecAge#. (Data for 1 Stock!). Other variables can be there but are not used.
+#' @param flags a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged. Labels have to match the criteria used in the function(LIST). The built-in object flags_default has is a template. 
+#' @keywords contrast, outliers
+#' @export
+#' @examples
+#' data.chk <- checkSRData(SR_Sample[SR_Sample$Stock == "Stock1",])
+#' print(data.chk)
 
 
-checkSRData <- function(sr.df,flags.df){
-# designed for 1 stock at a time!!
-# sr.df is a data frame with Year, Spn, Rec, and optionally SpnExp RecAge#,
-# Note: only 1 stock input!
-# flags.df is a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged.
-# labels have to match the criteria used below
-# Note: if only one direction applies, set the other to NA (e.g. [10,NA] means flag values less than 10).
-# Metric calculations are explained throughout the fn code.
+checkSRData <- function(sr_obj,flags = NULL){
 
 
+if(is.null(flags)){ flags <- flags_default }  # use built in data object unless user specifies different
 
 
 # Low contrast in Spn Data -------------------------------------
 # calc: max(spn)/min(spn)
 
 flag.label <- "Contr"
-metric.in <- max(sr.df$Spn,na.rm=TRUE)/min(sr.df$Spn,na.rm=TRUE)
+metric.in <- max(sr_obj$Spn,na.rm=TRUE)/min(sr_obj$Spn,na.rm=TRUE)
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                        metric.val = metric.in,
                        round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 
 
 
 # Insufficient SR data -------------------------------------
 # calc: num(BY) with spn and rec
-sr.idx <- !is.na(sr.df$Spn) & !is.na(sr.df$Rec)
+sr.idx <- !is.na(sr_obj$Spn) & !is.na(sr_obj$Rec)
 metric.in  <- sum(sr.idx)
 flag.label <- "NumObs"
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.in,
                       round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 
 
 
 # Missing large Spn -------------------------------------
 # calc: Max(spn)/(Max(spn in SR)
-metric.in<- max(sr.df$Spn,na.rm = TRUE) / max(sr.df$Spn[sr.idx],na.rm = TRUE)
+metric.in<- max(sr_obj$Spn,na.rm = TRUE) / max(sr_obj$Spn[sr.idx],na.rm = TRUE)
 flag.label <- "LgSpn"
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.in,
                       round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 
 
 # Missing large Rec -------------------------------------
 # calc: Max(Rec)/(Max(Rec in SR)
-metric.in <- max(sr.df$Rec,na.rm = TRUE) / max(sr.df$Rec[sr.idx],na.rm = TRUE)
+metric.in <- max(sr_obj$Rec,na.rm = TRUE) / max(sr_obj$Rec[sr.idx],na.rm = TRUE)
 flag.label <- "LgRec"
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.in,
                       round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 
 
 
 # Missing small Spn -------------------------------------
 # calc: Min(spn)/(Min(spn in SR)
-metric.in<- min(sr.df$Spn,na.rm = TRUE) / min(sr.df$Spn[sr.idx],na.rm = TRUE)
+metric.in<- min(sr_obj$Spn,na.rm = TRUE) / min(sr_obj$Spn[sr.idx],na.rm = TRUE)
 flag.label <- "SmSpn"
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.in,
                       round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 
 # Missing small Rec -------------------------------------
 # calc: Min(rec)/(Min(rec in SR)
-metric.in<- min(sr.df$Rec,na.rm = TRUE) / min(sr.df$Rec[sr.idx],na.rm = TRUE)
+metric.in<- min(sr_obj$Rec,na.rm = TRUE) / min(sr_obj$Rec[sr.idx],na.rm = TRUE)
 flag.label <- "SmRec"
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.in,
                       round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 
 
@@ -113,23 +118,23 @@ flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 flag.label <- "LgExp"
 
-if("SpnExp" %in% names(sr.df)){
+if("SpnExp" %in% names(sr_obj)){
 
-metric.in <- median(sr.df$SpnExp, na.rm = TRUE)
+metric.in <- median(sr_obj$SpnExp, na.rm = TRUE)
 
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.in,
                       round.val = 2)
 
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 }
 
-if(!("SpnExp" %in% names(sr.df))){
-  flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-  flags.df[flags.df$Label == flag.label, "Flagged"] <- NA
+if(!("SpnExp" %in% names(sr_obj))){
+  flags[flags$Label == flag.label, "MetricVal"] <- NA
+  flags[flags$Label == flag.label, "Flagged"] <- NA
 }
 
 
@@ -140,27 +145,27 @@ if(!("SpnExp" %in% names(sr.df))){
 
 flag.label <- "VarAge"
 
-if(sum(grepl("RecAge",names(sr.df)))>=2) { # don only of have at least 2 age classes in the data
+if(sum(grepl("RecAge",names(sr_obj)))>=2) { # don only of have at least 2 age classes in the data
 
 
-  age.sub <- sr.df[,grepl("RecAge", names(sr.df))]
+  age.sub <- sr_obj[,grepl("RecAge", names(sr_obj))]
 
   metric.pre <- lapply(age.sub,range.calc)
 
   metric.in <- max(unlist(metric.pre))
 
-  flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                        flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+  flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                        flag.upper = flags[flags$Label == flag.label,"Upper"],
                         metric.val = metric.in,
                         round.val = 2)
 
-  flags.df[flags.df$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
-  flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+  flags[flags$Label == flag.label, "MetricVal"] <- flag.tmp$MetricVal
+  flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 }
 
-if(sum(grepl("RecAge",names(sr.df)))<2){
-  flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-  flags.df[flags.df$Label == flag.label, "Flagged"] <- NA
+if(sum(grepl("RecAge",names(sr_obj)))<2){
+  flags[flags$Label == flag.label, "MetricVal"] <- NA
+  flags[flags$Label == flag.label, "Flagged"] <- NA
 }
 
 
@@ -168,18 +173,18 @@ if(sum(grepl("RecAge",names(sr.df)))<2){
 # calc: Spn / Med(Spn)
 
 flag.label <- "OddSpn"
-metric.obs <- sr.df$Spn / median(sr.df$Spn, na.rm = TRUE)
+metric.obs <- sr_obj$Spn / median(sr_obj$Spn, na.rm = TRUE)
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                        flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                        flag.upper = flags[flags$Label == flag.label,"Upper"],
                         metric.val = metric.obs,
                         round.val = 2)
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
-flags.df[flags.df$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
+flags[flags$Label == flag.label, "MetricVal"] <- NA
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
 
-sr.df[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
-sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
+sr_obj[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
+sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 
 
@@ -187,54 +192,54 @@ sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 # calc: Rec / Med(Rec)
 
 flag.label <- "OddRec"
-metric.obs <- sr.df$Rec/ median(sr.df$Rec, na.rm = TRUE)
+metric.obs <- sr_obj$Rec/ median(sr_obj$Rec, na.rm = TRUE)
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.obs,
                       round.val = 2)
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
-flags.df[flags.df$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
+flags[flags$Label == flag.label, "MetricVal"] <- NA
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
 
-sr.df[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
-sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
+sr_obj[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
+sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 
 
 # Unusual Prod obs --------------------------------------------
 # calc: R/S (or scale by median R/S? NEED TO DISCUSS
 flag.label <- "OddProd"
-metric.obs <- (sr.df$Rec/sr.df$Spn) #/ median(sr.df$Rec/sr.df$Spn, na.rm = TRUE)
+metric.obs <- (sr_obj$Rec/sr_obj$Spn) #/ median(sr_obj$Rec/sr_obj$Spn, na.rm = TRUE)
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.obs,
                       round.val = 2)
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
-flags.df[flags.df$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
+flags[flags$Label == flag.label, "MetricVal"] <- NA
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
 
-sr.df[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
-sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
+sr_obj[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
+sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 
 # Unusual Spn Expansions --------------------------------------------
 # calc: SpnExp / Med(SpnExp)
 
 flag.label <- "OddExp"
-metric.obs <- sr.df$SpnExp   / median(sr.df$SpnExp, na.rm = TRUE)
+metric.obs <- sr_obj$SpnExp   / median(sr_obj$SpnExp, na.rm = TRUE)
 
-flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                      flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                      flag.upper = flags[flags$Label == flag.label,"Upper"],
                       metric.val = metric.obs,
                       round.val = 2)
-flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
-flags.df[flags.df$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
+flags[flags$Label == flag.label, "MetricVal"] <- NA
+flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+flags[flags$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
 
-sr.df[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
-sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
+sr_obj[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
+sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 
 # Unusual Age Comp --------------------------------------------
@@ -243,52 +248,51 @@ sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 flag.label <- "OddAge"
 
-if(sum(grepl("RecAge",names(sr.df)))>=2) { # do only of have at least 2 age classes in the data
+if(sum(grepl("RecAge",names(sr_obj)))>=2) { # do only of have at least 2 age classes in the data
 
-  age.sub <- sr.df[,grepl("RecAge", names(sr.df))]
+  age.sub <- sr_obj[,grepl("RecAge", names(sr_obj))]
   metric.pre <- lapply(age.sub,function(x){median(x,na.rm =TRUE)})
   age.main <- names(unlist(metric.pre))[unlist(metric.pre) == max(unlist(metric.pre))]
 
-  metric.in <- sr.df[[age.main]] / metric.pre[[age.main]]
+  metric.in <- sr_obj[[age.main]] / metric.pre[[age.main]]
 
-  flag.tmp <- flag.calc(flag.lower = flags.df[flags.df$Label == flag.label,"Lower"],
-                        flag.upper = flags.df[flags.df$Label == flag.label,"Upper"],
+  flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
+                        flag.upper = flags[flags$Label == flag.label,"Upper"],
                         metric.val = metric.in,
                         round.val = 2)
 
-  flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-  flags.df[flags.df$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
-  flags.df[flags.df$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
+  flags[flags$Label == flag.label, "MetricVal"] <- NA
+  flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
+  flags[flags$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=TRUE)
 
-  sr.df[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
-  sr.df[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
+  sr_obj[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
+  sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 }
 
-if(sum(grepl("RecAge",names(sr.df)))<2){
-  flags.df[flags.df$Label == flag.label, "MetricVal"] <- NA
-  flags.df[flags.df$Label == flag.label, "Flagged"] <- NA
-  flags.df[flags.df$Label == flag.label, "NumFlagged"] <- NA
-  sr.df[[paste0(flag.label,"Val")]] <- NA
-  sr.df[[paste0(flag.label,"Flag")]] <- NA
+if(sum(grepl("RecAge",names(sr_obj)))<2){
+  flags[flags$Label == flag.label, "MetricVal"] <- NA
+  flags[flags$Label == flag.label, "Flagged"] <- NA
+  flags[flags$Label == flag.label, "NumFlagged"] <- NA
+  sr_obj[[paste0(flag.label,"Val")]] <- NA
+  sr_obj[[paste0(flag.label,"Flag")]] <- NA
 }
 
 
 
 #-----------------------------------------
 
-main.cols <- flags.df$Scope == "Obs" & !grepl("Age",flags.df$Label)
+main.cols <- flags$Scope == "Obs" & !grepl("Age",flags$Label)
 
-sr.df[["NumFlagsMain"]]  <- rowSums(sr.df[,paste0(flags.df$Label[main.cols],"Flag")])
-sr.df[["NumFlagsAll"]]  <- rowSums(sr.df[,paste0(flags.df$Label[flags.df$Scope == "Obs"],"Flag")])
+sr_obj[["NumFlagsMain"]]  <- rowSums(sr_obj[,paste0(flags$Label[main.cols],"Flag")])
+sr_obj[["NumFlagsAll"]]  <- rowSums(sr_obj[,paste0(flags$Label[flags$Scope == "Obs"],"Flag")])
 
 
-list.out <- list(Summary = flags.df, Data = sr.df)
+list.out <- list(Summary = flags, Data = sr_obj)
 
 } # end checkSRData() function
 
 
 
-# HELPER FUNCTIONS
 
 flag.calc <- function(flag.lower, flag.upper,metric.val,round.val = NULL){
 # internal subroutine
