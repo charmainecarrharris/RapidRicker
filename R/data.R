@@ -8,9 +8,9 @@
 #'   \item{Year}{brood year}
 #'   \item{Spn}{spawner estimate}
 #'   \item{Rec}{recruitment estimate}
-#'   \item{logRpS}{calculated value of log(Rec/Spn), usually with %>% mutate(logRpS = log(Rec/Spn))}
+#'   \item{logRpS}{calculated value of log(Rec/Spn), usually with mutate(logRpS = log(Rec/Spn))}
 #'   \item{SpnExp}{OPTIONAL: expansion factor applied to get the spawner estimate}
-#'   \item{RecAge#}{proportion each age class contributes to the total recruits}
+#'   \item{RecAgeNumber}{proportion each age class contributes to the total recruits (e.g. RecAge3, RecAge4, RecAge5}
 #'   \item{}{}
 #'   ...
 #' }
