@@ -5,17 +5,7 @@
 \alias{SR_Sample}
 \title{Sample Spawner Recruit Data}
 \format{
-A data frame with  4 required and some optional variables:
-\describe{
-  \item{Stock}{ stock name}
-  \item{Year}{brood year}
-  \item{Spn}{spawner estimate}
-  \item{Rec}{recruitment estimate}
-  \item{SpnExp}{OPTIONAL: expansion factor applied to get the spawner estimate}
-  \item{RecAge#}{proportion each age class contributes to the total recruits}
-  \item{}{}
-  ...
-}
+
 }
 \source{
 Dummy Data

@@ -61,15 +61,30 @@ print(data.chk$Summary)
 print(head(data.chk$Data))
 
 
-# NOTE: build logRpS into the data file, and help file etc.
-ricker.bm <- calcDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",] %>%
-                             mutate(logRpS = log(Rec/Spn)),min.obs = 10)
+#  single BM calc
+ricker.bm <- calcDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],
+                              min.obs = 10)
 print(ricker.bm)
 
-ricker.test <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",]%>%
-                                 mutate(logRpS = log(Rec/Spn)),
+# do a retrospective test (start with the first min.obs records, then add 1 at a time
+ricker.retro <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],
                                min.obs= 10,  type="retro")
-print(ricker.test)
+
+print(head(ricker.retro))
+
+# do jackknife (drop 1 record and recalculate)
+ricker.jack <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],
+                                min.obs= 10,  type="jack")
+
+print(head(ricker.jack))
+
+
+# do a reverse retrospective (start with all data, and drop beginning of the series  until only min.obs are left)
+ricker.revretro <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],
+                                min.obs= 10,  type="revretro")
+
+print(head(ricker.revretro))
+
 
 
 
