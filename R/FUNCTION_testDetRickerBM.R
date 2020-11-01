@@ -13,11 +13,6 @@
 
 
 testDetRickerBM <- function(sr_obj,min.obs=15, type="jack",trace = FALSE){
-# sr_obj is a data frame with Year and Spn, logRpS (other variables not used RpS, Qual, ExpF etc)
-# min.obs is min number of S-R pairs needed to fit a model
-# type =  one of "jack" (drop 1), 
-# 
-
 
 sr.use  <- sr_obj %>% dplyr::filter(!is.na(logRpS),!is.na(Spn))
 
