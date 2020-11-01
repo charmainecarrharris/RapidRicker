@@ -2,7 +2,7 @@
 #'
 #' This function calculates standard biological benchmarks (Smsy, Seq, Smax, Umsy) for different subsets of the input data, using the function calcDetRickerBM(). See calculation details there.
 #' @param sr_obj a data frame with Year and Spn, logRpS (Data for 1 Stock!). Other variables can be there but are not used (RpS, Qual, ExpF etc). 
-#' @param min.n min number of S-R pairs needed to fit a model
+#' @param min.obs min number of S-R pairs needed to fit a model
 #' @param type one of "jack" (for a drop 1 jackknife test), "retro" (retrospective test starting with min.obs, then adding more years), or "revretro" (reverse retrospective, starting with all years and them dropping the earlier obs one at a time until only the most recent min.obs are left).
 #' @param trace if TRUE, print various intermediate diagnostic output to the console
 #' @keywords sensitivity test
@@ -12,12 +12,7 @@
 
 
 
-testDetRickerBM <- function(sr_obj,min.n=15, type="jack",trace = FALSE){
-# sr_obj is a data frame with Year and Spn, logRpS (other variables not used RpS, Qual, ExpF etc)
-# min.n is min number of S-R pairs needed to fit a model
-# type =  one of "jack" (drop 1), 
-# 
-
+testDetRickerBM <- function(sr_obj,min.obs=15, type="jack",trace = FALSE){
 
 sr.use  <- sr_obj %>% dplyr::filter(!is.na(logRpS),!is.na(Spn))
 
@@ -31,7 +26,7 @@ if(type == "jack"){
                                      dimnames=list(yrs.do,bm.cols)))
 	for(yr in yrs.do){
 			sr.in <- sr.use %>% dplyr::filter(Year != yr)
-			bm.i <- calcDetRickerBM(sr_obj = sr.in,min.n=min.n)
+			bm.i <- calcDetRickerBM(sr_obj = sr.in,min.obs=min.obs)
 			bm.test.store[as.character(yr),] <- bm.i
 		}
 		
@@ -43,7 +38,7 @@ if(type == "jack"){
 if(type == "retro"){
 	
 	
-	yrs.do <- (min(sr.use$Year) + min.n):max(sr.use$Year)
+	yrs.do <- (min(sr.use$Year) + min.obs):max(sr.use$Year)
 	
 	#print(yrs.do)
 	
@@ -51,7 +46,7 @@ if(type == "retro"){
                                      dimnames=list(yrs.do,bm.cols)))
 	for(yr in yrs.do){
 			sr.in <- sr.use %>% dplyr::filter(Year <= yr)
-			bm.i <- calcDetRickerBM(sr_obj = sr.in,min.n=min.n)
+			bm.i <- calcDetRickerBM(sr_obj = sr.in,min.obs=min.obs)
 			bm.test.store[as.character(yr),] <- bm.i
 		}
 		
@@ -63,7 +58,7 @@ if(type == "retro"){
 if(type == "revretro"){
 	
 	
-	yrs.do <- min(sr.use$Year) : (max(sr.use$Year) - min.n)
+	yrs.do <- min(sr.use$Year) : (max(sr.use$Year) - min.obs)
 	
 	if(trace){print(yrs.do)}
 	
@@ -72,7 +67,7 @@ if(type == "revretro"){
 	for(yr in yrs.do){
 			sr.in <- sr.use %>% dplyr::filter(Year >= yr)
 			if(trace){print(sr.in$Year)}
-			bm.i <- calcDetRickerBM(sr_obj = sr.in,min.n=min.n)
+			bm.i <- calcDetRickerBM(sr_obj = sr.in,min.obs=min.obs)
 			bm.test.store[as.character(yr),] <- bm.i
 		}
 		
