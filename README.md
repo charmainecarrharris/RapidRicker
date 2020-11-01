@@ -86,6 +86,7 @@ ricker.revretro <- testDetRickerBM(SR_Sample[SR_Sample$Stock == "Stock1",],
 print(head(ricker.revretro))
 
 
+
 # Plot examples
 
 # add a new col, for easier plotting
