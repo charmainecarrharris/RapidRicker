@@ -1,9 +1,8 @@
 #' calcDetRickerBM
 #'
-#' This function calculates Ricker Model parameters for spawner-recruit data using a simple linear regression of log(R/S) ~ S as well as resulting biological benchmarks.  Note that these are simple deterministic model fits intended for rapid testing of input data!
-#' Benchmark calculations were adapted from BUGS code used in Miller & Pestal (2020), 
-#' available at https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2020/2020_035-eng.pdf
-#' Two versions for some BM are produced: "h = Hilborn Proxy" (REF), "p = Peterman Proxy" (REF)
+#' This function calculates Ricker Model parameters for spawner-recruit data using a simple linear regression of log(R/S) ~ S.  Note that these are simple deterministic model fits intended for rapid testing of input data!
+#' Also calculates standard biological benchmarks (Smsy, Seq, Smax, Umsy). Benchmark calculations were adapted from BUGS code used in Miller & Pestal (2020), available \href{https://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2020/2020_035-eng.pdf}{here}.
+#' Two versions for some BM are produced: "_h" = Hilborn Proxy (\href{https://cdnsciencepub.com/doi/pdf/10.1139/f85-230}{Hilborn 1985}) and "_p" = Peterman Proxy" (\href{https://cdnsciencepub.com/doi/pdf/10.1139/f99-204}{Peterman et al. 2000}).
 #' @param sr_obj a data frame with Year and Spn, logRpS (Data for 1 Stock!). Other variables can be there but are not used (RpS, Qual, ExpF etc)
 #' @param min.n min number of S-R pairs needed to fit a model
 #' @keywords Ricker fit, Smsy, Smax, Seq, Umsy
@@ -13,11 +12,6 @@
 #' print(ricker.bm)
 
 calcDetRickerBM <- function(sr_obj,min.n=15){
-# 
-# 
-# 
-# 
-  
 
 sr.use  <- sr_obj %>% dplyr::filter(!is.na(logRpS),!is.na(Spn))
 

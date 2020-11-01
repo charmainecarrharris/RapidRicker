@@ -1,11 +1,11 @@
 Package: RapidRicker
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
-Version: 1.0
-Date: 2020-10-31
-Author: Your Name
-Maintainer: Your Name <your@email.com>
-Description: One paragraph description of what the package does as one or more full sentences.
-License: GPL (>= 2)
-Imports: Rcpp (>= 1.0.5)
-LinkingTo: Rcpp
+Title: Rapid spawner-recruit data quality checks and sensitivity tests of standard biological benchmarks.
+Version: 0.1.0
+Author: Gottfried Pestal, Charmaine Carr-Harris, Steven Cox-Rogers
+Maintainer: Gottfried Pestal <gpestal@solv.ca>
+Description: Main functions to check the data, calculate benchmarks, and do sensitivity tests. Additional functions to run all the steps for multiple stocks and produce summary output (csv files, diagnostic plots).
+License: GNU GENERAL PUBLIC LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
