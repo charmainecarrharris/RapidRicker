@@ -34,9 +34,7 @@ for(stk in stk.list){
 
   print("------------")
   print(stk)
-  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) %>%
-            select(Year,EffSpn,LogRpS) %>%
-            dplyr::rename(Spn = EffSpn,logRpS = LogRpS)
+  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk)
   bm.tmp <- calcDetRickerBM(sr_obj = sr.sub,min.obs=)
   bm.det.store[stk,] <- bm.tmp
 }
@@ -56,9 +54,7 @@ for(stk in stk.list){
   print("------------")
   print(stk)
 
-  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) %>%
-    select(Year,EffSpn,LogRpS) %>%
-    dplyr::rename(Spn = EffSpn,logRpS = LogRpS)
+  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) 
 
   if(sum(!is.na(sr.sub$Spn) & !is.na(sr.sub$logRpS) ) > min.obs){
 
@@ -83,10 +79,8 @@ for(stk in stk.list){
   print("------------")
   print(stk)
 
-  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) %>%
-    select(Year,EffSpn,LogRpS) %>%
-    dplyr::rename(Spn = EffSpn,logRpS = LogRpS)
-
+  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) 
+  
   if(sum(!is.na(sr.sub$Spn) & !is.na(sr.sub$logRpS) ) > min.obs){
 
     retro.tmp <- testDetRickerBM(sr_obj = sr.sub,min.obs=min.obs,type="retro")
@@ -112,10 +106,8 @@ for(stk in stk.list){
   print("------------")
   print(stk)
 
-  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) %>%
-    select(Year,EffSpn,LogRpS) %>%
-    dplyr::rename(Spn = EffSpn,logRpS = LogRpS)
-
+  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) 
+  
   if(sum(!is.na(sr.sub$Spn) & !is.na(sr.sub$logRpS) ) > min.obs){
 
     revretro.tmp <- testDetRickerBM(sr_obj = sr.sub,min.obs=min.obs,type="revretro",trace=FALSE)
@@ -143,9 +135,7 @@ for(stk in stk.list){
 
 
 
-  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) %>%
-    select(Year,EffSpn,LogRpS) %>%
-    dplyr::rename(Spn = EffSpn,logRpS = LogRpS)
+  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) 
 
     # drop the 2 R,S pairs with the largest Spn
     drop.val <- sort(sr.sub$Spn[!is.na(sr.sub$logRpS)],decreasing = TRUE)[2]
