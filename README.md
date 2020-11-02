@@ -61,8 +61,22 @@ library(tidyverse) # not sure why this isn't handled in the dependencies?
 
 rapid.ricker.out <- RapidRicker(sr_obj_m = SR_Sample, min.obs = 10,  trace=TRUE)
 
+# check the components of the output
 names(rapid.ricker.out)
+
+# look at the data check outputs
+names(rapid.ricker.out$Data)
+rapid.ricker.out$Data$TabSeriesVal
+rapid.ricker.out$Data$TabSeriesFlags
+rapid.ricker.out$Data$TabObsFLags
+head(rapid.ricker.out$Data$Summary)
+head(rapid.ricker.out$Data$Data)
+
+# look at the BM outputs
 names(rapid.ricker.out$BM)
+head(rapid.ricker.out$BM$Retro)
+
+# look at the PercDiff outputs (sensitivity test vs. base case)
 head(rapid.ricker.out$PercDiff$RetroPercDiffMin)
 head(rapid.ricker.out$PercDiff$RetroPercDiffMax)
 
