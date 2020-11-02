@@ -7,12 +7,15 @@ Development Team: Gottfried Pestal, Charmaine Carr-Harris, Steven Cox-Rogers
 **Important Note:** This package is under development. Functions may change rapidly and substantially. Do not use these if you are not part of the development team!
 
 
-For now *RapidRicker* includes 3 functions:
+For now *RapidRicker* includes 3 functions that work on data for a single stock:
 
 *  *checkSRData()*: calculates a set of diagnostics for the spawner-recruit data. Some apply to the whole series (e.g. the contrast is spawner estimates), while others flag individual observations (e.g. R/S above user-specified plausible upper bound, pointing to a potential data error in either R or S).
 * *calcDetRickerBM()*: fits a simple linear regression to ```log(R/S) ~ S``` and calculates standard biological
 benchmarks (Smsy, Smax, Seq, Umsy)
 * *testDetRickerBM()*: runs jackknife (drop 1), retrospective (gradually add recent data) or reverse retrospective (gradually drop earlier data) variations of the simple Ricker fit.
+
+There is also a wrapper function *RapidRicker()* that applies all of these to a data set with multiple stocks and generates a compact output object with list elements for the data check (summary tables, details), BM estimates, and sensitivity tests (e.g. BM values for each step in the retrospective, and a summary of min/max % diff of the retrospective values compared to the base case with all values).
+
 
 To get up and running with some examples, follow the *Quick Start* steps below.
 
@@ -59,6 +62,12 @@ library(tidyverse) # not sure why this isn't handled in the dependencies?
 # ---------------------------------------------
 # run the wrapper function (all tests, all stocks)
 
+
+
+# look at the default criteria for the data check 
+flags_default
+
+# run the wrapper function
 rapid.ricker.out <- RapidRicker(sr_obj_m = SR_Sample, min.obs = 10,  trace=TRUE)
 
 # check the components of the output
@@ -82,7 +91,7 @@ head(rapid.ricker.out$PercDiff$RetroPercDiffMax)
 
 
 # -----------------------------------------
-# USe individual functions
+# Use individual functions
 
 
 data.chk <- checkSRData(SR_Sample[SR_Sample$Stock == "Stock1",])
