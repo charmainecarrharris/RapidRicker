@@ -21,7 +21,6 @@ Include REF
 flags_default
 }
 \description{
-A dataset containing observed recruits/spawner and various environmental covariates used in the 2019 Forecast for 
-Fraser River Sockeye Salmon (REF).IMPORTANT NOTE: Time series are not lined up based on plausible mechanism (e.g. sea surface temp may affect overall productivity during early ocean entry, but RpEff values are by brood year. Stock-specific offsets are required to align values properly. INCLUDE LIST!
+A dataset containing labels, thresholds and decriptions for various data qulity metrics. INCLUDE LIST!
 }
 \keyword{datasets}

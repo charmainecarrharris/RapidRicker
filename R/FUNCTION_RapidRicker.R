@@ -4,20 +4,87 @@
 #' @param sr_obj_m a data frame with Stock, Year and Spn, logRpS (Data for multiple stocks!). Other variables can be there but are not used (RpS, Qual, ExpF etc). 
 #' @param min.obs min number of S-R pairs needed to fit a model
 #' @param trace if TRUE, print various intermediate diagnostic output to the console
+#' @param flags a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged. Labels have to match the criteria used in the function(LIST). If flags = NULL, then it uses the built-in object flags_default.
 #' @keywords sensitivity test
 #' @export
 #' @examples
 #' rapid.ricker.out <- RapidRicker(SR_Sample,min.obs = 10,  trace=FALSE)
 
 
-RapidRicker <- function(sr_obj_m,min.obs = 10, trace = TRUE){
+RapidRicker <- function(sr_obj_m,min.obs = 10, trace = TRUE, flags = NULL){
 
+# NEED TO FIX:
+# - how trace = TRUE is handled throughout the subroutine calls
+# - reduce what's currently printed to screen in the subroutines.
 
 stk.list <- sort(unique(sr_obj_m$Stock))
-if(trace){
+
   print(paste(length(stk.list), "Stocks"))
   print(stk.list)
-}
+
+
+# --------------------------------------------------------------------------
+# Part 0: Run the data check
+
+if(is.null(flags)){flags <- flags_default}
+
+
+
+# output objects
+data.check.summary <- list(NULL)
+data.check.data <- list(NULL)
+
+
+for(stk in unique(sr_obj_m$Stock)){
+  
+  print("----------------------------")
+  print(stk)
+  
+  # prep the data
+  sr.sub <- sr_obj_m %>% dplyr::filter(Stock == stk) 
+  
+  if(dim(sr.sub)[1] > 0 ){
+    sr.in <-  sr.sub[,names(sr.sub) %in% c("Year","Spn","Rec","SpnExp") | grepl("RecAge",names(sr.sub))]
+    rec.age.idx <- grepl("RecAge",names(sr.in))
+    # convert to Proportion (in case it isn't), then round
+    sr.in[,rec.age.idx] <- round(sr.in[,rec.age.idx]/ rowSums(sr.in[,rec.age.idx],na.rm=TRUE),4) 
+    
+    data.check.tmp <- checkSRData(sr_obj = sr.in, flags  = flags)
+    
+    data.check.summary[[stk]] <-  cbind(Stock = stk, data.check.tmp$Summary)
+    data.check.data[[stk]] <-  cbind(Stock = stk, data.check.tmp$Data)
+  }
+  
+  
+} #end looping through stocks
+
+# convert list to data frame
+data.check.summary <-  bind_rows(data.check.summary)
+data.check.data <-  bind_rows(data.check.data)
+  
+  
+table.series.val <- data.check.summary %>% dplyr::filter(Scope == "Series") %>% 
+          pivot_wider(id_cols = Stock, names_from = Label, values_from = MetricVal)
+            
+table.series.flags <- data.check.summary %>% dplyr::filter(Scope == "Series") %>% 
+  pivot_wider(id_cols = Stock, names_from = Label, values_from = Flagged)
+
+table.obs.numflagged <- left_join(
+  table.series.val %>% select(Stock, NumObs),   
+  data.check.summary %>% dplyr::filter(Scope == "Obs") %>% 
+  pivot_wider(id_cols = Stock, names_from = Label, values_from = NumFlagged),
+  by = "Stock")
+  
+  
+  
+
+data.check.list <- list(TabSeriesVal = table.series.val,
+						TabSeriesFlags = table.series.flags,
+						TabObsFLags = table.obs.numflagged,
+						Summary = data.check.summary, Data = data.check.data)
+
+
+
 
 
 #-----------------------------------------------------------------------
@@ -239,7 +306,7 @@ diff.list <- list(
 
 
 
-out.list <- list(BM = bm.list, PercDiff = diff.list)
+out.list <- list(Data = data.check.list, BM = bm.list, PercDiff = diff.list)
 
 return(out.list)
 
