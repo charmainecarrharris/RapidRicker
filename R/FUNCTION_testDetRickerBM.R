@@ -79,6 +79,3 @@ if(type == "revretro"){
 return(bm.test.store)
 
 }
-
-
-
