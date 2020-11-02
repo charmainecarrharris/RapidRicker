@@ -55,6 +55,22 @@ head(SR_Sample) # shows the first few rows
 library(RapidRicker)
 library(tidyverse) # not sure why this isn't handled in the dependencies?
 
+
+# ---------------------------------------------
+# run the wrapper function (all tests, all stocks)
+
+rapid.ricker.out <- RapidRicker(sr_obj_m = SR_Sample, min.obs = 10,  trace=TRUE)
+
+names(rapid.ricker.out)
+names(rapid.ricker.out$BM)
+head(rapid.ricker.out$PercDiff$RetroPercDiffMin)
+head(rapid.ricker.out$PercDiff$RetroPercDiffMax)
+
+
+# -----------------------------------------
+# USe individual functions
+
+
 data.chk <- checkSRData(SR_Sample[SR_Sample$Stock == "Stock1",])
 names(data.chk)
 print(data.chk$Summary)
