@@ -7,7 +7,7 @@ Development Team: Gottfried Pestal, Charmaine Carr-Harris, Steven Cox-Rogers
 **Important Notes:** 
 
 * This package is under development. Functions may change rapidly and substantially. Do not use these if you are not part of the development team!
-* SR model fits and biological benchmarks are simple deterministic fits based on ```lm(logRps ~ S)```. These are intended solely as a rapid check for the sensitivity to different ways of subsetting the data.  We envision this as a pre-screening step to plan out more formal model fitting and sensitivity testing (e.g. Bayesian models with time-varying productivity, hierarchical models with shared productivity estimates across stocks).
+* SR model fits and biological benchmarks are simple deterministic fits based on ```lm(logRpS ~ S)```. These are intended solely as a rapid check for the sensitivity to different ways of subsetting the data.  We envision this as a pre-screening step to plan out more formal model fitting and sensitivity testing (e.g. Bayesian models with time-varying productivity, hierarchical models with shared productivity estimates across stocks).
 
 For now *RapidRicker* includes 3 functions that work on data for a single stock:
 
