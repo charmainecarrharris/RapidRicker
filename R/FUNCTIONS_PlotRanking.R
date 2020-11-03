@@ -70,11 +70,14 @@ maxvars = NULL, xlim = NULL, flag = NULL,mean.pt=FALSE){
         x.ticks.labels <- paste(x.ticks/10^6, "M", sep = "")
     }
     axis(3, at = x.ticks, labels = x.ticks.labels)
+	
     if (!is.null(flag)) {
-        flag.idx <- names(data.df) == flag
+	
+        flag.idx <- dimnames(data.summary)[1] == flag
         abline(h = c(tick.loc[flag.idx] + 0.5, tick.loc[flag.idx] - 
             0.5), col = "tomato", lty = 2, xpd = TRUE)
     }
+	
     lines(data.summary[, "50%"], tick.loc, type = "b", 
         pch = 19, cex = 1.6, col = "darkblue", xpd = NA)
     segments(data.summary[, paste0(trim, "%")], tick.loc, 
