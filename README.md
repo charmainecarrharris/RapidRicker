@@ -76,12 +76,12 @@ rapid.ricker.out <- RapidRicker(sr_obj_m = SR_Sample, min.obs = 10,  trace=TRUE)
 names(rapid.ricker.out)
 
 # look at the data check outputs
-names(rapid.ricker.out$Data)
-rapid.ricker.out$Data$TabSeriesVal
-rapid.ricker.out$Data$TabSeriesFlags
-rapid.ricker.out$Data$TabObsFLags
-head(rapid.ricker.out$Data$Summary)
-head(rapid.ricker.out$Data$Data)
+names(rapid.ricker.out$DataCheck)
+rapid.ricker.out$DataCheck$TabSeriesVal
+rapid.ricker.out$DataCheck$TabSeriesFlags
+rapid.ricker.out$DataCheck$TabObsFLags
+head(rapid.ricker.out$DataCheck$Summary)
+head(rapid.ricker.out$DataCheck$Data)
 
 # look at the BM outputs
 names(rapid.ricker.out$BM)

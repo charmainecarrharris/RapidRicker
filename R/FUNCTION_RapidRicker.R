@@ -312,10 +312,13 @@ diff.list <- list(
 } #end if bm.test
 
 
-out.list <- NULL
+out.list <- list()
 
-if(data.check){ out.list <- c(out.list, data.check.list)}
-if(bm.test){out.list <- c(out.list, BM = bm.list, PercDiff = diff.list)}
+if(data.check){ out.list[["DataCheck"]] <- data.check.list}
+
+if(bm.test){out.list[["BM"]] <- bm.list
+			out.list[["PercDiff"]] <- diff.list
+			}
 
 
 return(out.list)
