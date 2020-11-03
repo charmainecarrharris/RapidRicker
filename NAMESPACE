@@ -3,5 +3,7 @@
 export(RapidRicker)
 export(calcDetRickerBM)
 export(checkSRData)
+export(plotRanking)
+export(plotTornado)
 export(spark.line)
 export(testDetRickerBM)
