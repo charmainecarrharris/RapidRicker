@@ -73,7 +73,7 @@ maxvars = NULL, xlim = NULL, flag = NULL,mean.pt=FALSE){
 	
     if (!is.null(flag)) {
 	
-        flag.idx <- dimnames(data.summary)[1] == flag
+        flag.idx <- dimnames(data.summary)[[1]] == flag
         abline(h = c(tick.loc[flag.idx] + 0.5, tick.loc[flag.idx] - 
             0.5), col = "tomato", lty = 2, xpd = TRUE)
     }
