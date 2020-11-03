@@ -92,6 +92,59 @@ head(rapid.ricker.out$PercDiff$RetroPercDiffMin)
 head(rapid.ricker.out$PercDiff$RetroPercDiffMax)
 
 
+#--------------------------------------------------
+# Illustration of Summary Plots
+
+pdf(file = "RapidRicker_SamplePlots_Ranks&Tornado.pdf", onefile= TRUE, height = 8.5, width =11)
+
+spn.df <- SR_Sample %>% select(Stock,Year,Spn) %>% 
+              pivot_wider(id_cols = Year,names_from = Stock, values_from = Spn) %>% 
+              select(-Year)
+
+logRpS.df <- SR_Sample %>% select(Stock,Year,logRpS) %>% 
+                  pivot_wider(id_cols = Year,names_from = Stock, values_from = logRpS) %>% 
+                  select(-Year)
+
+
+
+par(mfrow = c(1,2),mai = c(1,2,1,0.2))
+
+# Rank stocks by Spn
+plotRanking(data.df = spn.df, trim = 0,  #show full range
+                         maxvars = 25, xlim = NULL, flag = "Stock5", mean.pt=FALSE)
+title(main = "Ranked by Median Spn")
+
+plotRanking(data.df = log(spn.df), trim = 0,  #show full range
+            maxvars = 25, xlim = NULL, flag = "Stock5", mean.pt=FALSE)
+title(main = "Ranked by Median Log(Spn)")
+  
+  
+# Plot sensitivity range from retrospective test
+
+smsy.range <- data.frame(Label = rapid.ricker.out$PercDiff$RetroPercDiffMin$Stock ,                      
+                        Lower = rapid.ricker.out$PercDiff$RetroPercDiffMin$Smsy_p,
+                        Mid = NA,
+                        Upper = rapid.ricker.out$PercDiff$RetroPercDiffMax$Smsy_p)
+  
+plotTornado(data.df = smsy.range, keep.rank= FALSE,add.labels = TRUE,xlim = c(-100,150),
+            solid.refline = 0, dashed.refline = c(-15,15))
+  
+
+
+umsy.range <- data.frame(Label = rapid.ricker.out$PercDiff$RetroPercDiffMin$Stock ,                      
+                         Lower = rapid.ricker.out$PercDiff$RetroPercDiffMin$Umsy_p,
+                         Mid = NA,
+                         Upper = rapid.ricker.out$PercDiff$RetroPercDiffMax$Umsy_p)
+title(main="Retrospective Test of Smsy")
+
+plotTornado(data.df = umsy.range, keep.rank= FALSE,add.labels = TRUE,xlim = c(-100,150),
+            solid.refline = 0, dashed.refline = c(-15,15))
+title(main="Retrospective Test of Umsy")
+
+
+dev.off()
+
+
 # -----------------------------------------
 # Use individual functions
 
