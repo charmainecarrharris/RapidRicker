@@ -4,12 +4,14 @@
 \alias{checkSRData}
 \title{checkSRData}
 \usage{
-checkSRData(sr_obj, flags = NULL)
+checkSRData(sr_obj, flags = NULL, trace = FALSE)
 }
 \arguments{
 \item{sr_obj}{a data frame with  Year, Spn, Rec, and optionally SpnExp and RecAge#. (Data for 1 Stock!). Other variables can be there but are not used.}
 
 \item{flags}{a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged. Labels have to match the criteria used in the function(LIST). The built-in object flags_default has is a template.}
+
+\item{trace}{if TRUE, print various intermediate details to the screen}
 }
 \description{
 This function calculates a set of diagnostics for the spawner-recruit data. Some apply to the whole series 
