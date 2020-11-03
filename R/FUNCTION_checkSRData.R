@@ -5,6 +5,7 @@
 #'  (e.g. R/S above user-specified plausible upper bound, pointing to a potential data error in either R or S).
 #' @param sr_obj  a data frame with  Year, Spn, Rec, and optionally SpnExp and RecAge#. (Data for 1 Stock!). Other variables can be there but are not used.
 #' @param flags a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged. Labels have to match the criteria used in the function(LIST). The built-in object flags_default has is a template. 
+#' @param trace if TRUE, print various intermediate details to the screen
 #' @keywords contrast, outliers
 #' @export
 #' @examples
@@ -12,7 +13,7 @@
 #' print(data.chk)
 
 
-checkSRData <- function(sr_obj,flags = NULL){
+checkSRData <- function(sr_obj,flags = NULL,trace = FALSE){
 
 
 if(is.null(flags)){ flags <- flags_default }  # use built in data object unless user specifies different
@@ -20,6 +21,8 @@ if(is.null(flags)){ flags <- flags_default }  # use built in data object unless 
 
 # Low contrast in Spn Data -------------------------------------
 # calc: max(spn)/min(spn)
+
+if(trace){print("Starting Contr")}
 
 flag.label <- "Contr"
 metric.in <- max(sr_obj$Spn,na.rm=TRUE)/min(sr_obj$Spn,na.rm=TRUE)
@@ -37,6 +40,9 @@ flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 # Insufficient SR data -------------------------------------
 # calc: num(BY) with spn and rec
+
+if(trace){print("Starting numObs")}
+
 sr.idx <- !is.na(sr_obj$Spn) & !is.na(sr_obj$Rec)
 metric.in  <- sum(sr.idx)
 flag.label <- "NumObs"
@@ -54,6 +60,9 @@ flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 # Missing large Spn -------------------------------------
 # calc: Max(spn)/(Max(spn in SR)
+
+if(trace){print("Starting LgSpn")}
+
 metric.in<- max(sr_obj$Spn,na.rm = TRUE) / max(sr_obj$Spn[sr.idx],na.rm = TRUE)
 flag.label <- "LgSpn"
 
@@ -69,6 +78,9 @@ flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 # Missing large Rec -------------------------------------
 # calc: Max(Rec)/(Max(Rec in SR)
+
+if(trace){print("Starting LgRec")}
+
 metric.in <- max(sr_obj$Rec,na.rm = TRUE) / max(sr_obj$Rec[sr.idx],na.rm = TRUE)
 flag.label <- "LgRec"
 
@@ -85,6 +97,9 @@ flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 # Missing small Spn -------------------------------------
 # calc: Min(spn)/(Min(spn in SR)
+
+if(trace){print("Starting SmSpn")}
+
 metric.in<- min(sr_obj$Spn,na.rm = TRUE) / min(sr_obj$Spn[sr.idx],na.rm = TRUE)
 flag.label <- "SmSpn"
 
@@ -99,6 +114,9 @@ flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 # Missing small Rec -------------------------------------
 # calc: Min(rec)/(Min(rec in SR)
+
+if(trace){print("Starting SmRec")}
+
 metric.in<- min(sr_obj$Rec,na.rm = TRUE) / min(sr_obj$Rec[sr.idx],na.rm = TRUE)
 flag.label <- "SmRec"
 
@@ -115,6 +133,8 @@ flags[flags$Label == flag.label, "Flagged"] <- flag.tmp$Flagged
 
 # Large Spn Expansion Factor (median) --------------------------------------------
 # calc: Median(ExpSpn)
+
+if(trace){print("Starting LgExp")}
 
 flag.label <- "LgExp"
 
@@ -142,6 +162,8 @@ if(!("SpnExp" %in% names(sr_obj))){
 
 # Unstable age comp --------------------------------------------
 # calc: MaxDiffByAge
+
+if(trace){print("Starting VarAge")}
 
 flag.label <- "VarAge"
 
@@ -172,6 +194,9 @@ if(sum(grepl("RecAge",names(sr_obj)))<2){
 # Unusual Spn obs --------------------------------------------
 # calc: Spn / Med(Spn)
 
+
+if(trace){print("Starting OddSpn")}
+
 flag.label <- "OddSpn"
 metric.obs <- sr_obj$Spn / median(sr_obj$Spn, na.rm = TRUE)
 
@@ -191,6 +216,8 @@ sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 # Unusual Rec obs --------------------------------------------
 # calc: Rec / Med(Rec)
 
+if(trace){print("Starting OddRec")}
+
 flag.label <- "OddRec"
 metric.obs <- sr_obj$Rec/ median(sr_obj$Rec, na.rm = TRUE)
 
@@ -209,6 +236,9 @@ sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 # Unusual Prod obs --------------------------------------------
 # calc: R/S (or scale by median R/S? NEED TO DISCUSS
+
+if(trace){print("Starting OddProd")}
+
 flag.label <- "OddProd"
 metric.obs <- (sr_obj$Rec/sr_obj$Spn) #/ median(sr_obj$Rec/sr_obj$Spn, na.rm = TRUE)
 
@@ -226,6 +256,8 @@ sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 
 # Unusual Spn Expansions --------------------------------------------
 # calc: SpnExp / Med(SpnExp)
+
+if(trace){print("Starting OddExp")}
 
 flag.label <- "OddExp"
 metric.obs <- sr_obj$SpnExp   / median(sr_obj$SpnExp, na.rm = TRUE)
@@ -245,6 +277,8 @@ sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 # Unusual Age Comp --------------------------------------------
 # calc: recAge / Med(RecAge) for main age comp
 #
+
+if(trace){print("Starting OddAge")}
 
 flag.label <- "OddAge"
 

@@ -14,9 +14,9 @@ plotTornado(
 )
 }
 \arguments{
-\item{data.df}{a data frame where each column is a set of values. Column labels become plot labels}
+\item{data.df}{a data frame with columns Label, Lower, Mid, Upper}
 
-\item{add.labels}{= TRUE, need another column called AddLabel which is added to the plot a labels inside the label axis (e.g. Avg abd as context)}
+\item{add.labels}{if = TRUE, data.df needs another column called AddLabel which is added to the plot a labels inside the label axis (e.g. Avg abd as context)}
 
 \item{rank}{default rank is based on range between Upper and Lower. if keep.rank = TRUE, then keep the input order as is.}
 }
