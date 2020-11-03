@@ -16,6 +16,12 @@
 checkSRData <- function(sr_obj,flags = NULL,trace = FALSE){
 
 
+
+req.inputs <- c("Year", "Spn", "Rec") 
+
+if(!all(req.inputs %in% names(sr_obj))){warning("in call to checkSRData(): One of the required columns is missing: Year, Spn, Rec"); stop()}
+
+
 if(is.null(flags)){ flags <- flags_default }  # use built in data object unless user specifies different
 
 
@@ -260,6 +266,9 @@ sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
 if(trace){print("Starting OddExp")}
 
 flag.label <- "OddExp"
+
+if("SpnExp" %in% names(sr_obj)){
+
 metric.obs <- sr_obj$SpnExp   / median(sr_obj$SpnExp, na.rm = TRUE)
 
 flag.tmp <- flag.calc(flag.lower = flags[flags$Label == flag.label,"Lower"],
@@ -272,6 +281,24 @@ flags[flags$Label == flag.label, "NumFlagged"] <-sum(flag.tmp$FlaggedObs,na.rm=T
 
 sr_obj[[paste0(flag.label,"Val")]] <- flag.tmp$MetricVal
 sr_obj[[paste0(flag.label,"Flag")]] <- flag.tmp$FlaggedObs
+} # end if have SpnExp column
+
+
+
+if(!("SpnExp" %in% names(sr_obj))){
+
+flags[flags$Label == flag.label, "MetricVal"] <- NA
+flags[flags$Label == flag.label, "Flagged"] <- NA
+flags[flags$Label == flag.label, "NumFlagged"] <- NA
+
+sr_obj[[paste0(flag.label,"Val")]] <- NA
+sr_obj[[paste0(flag.label,"Flag")]] <- NA
+
+
+}
+
+
+
 
 
 # Unusual Age Comp --------------------------------------------
