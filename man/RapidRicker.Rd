@@ -4,7 +4,14 @@
 \alias{RapidRicker}
 \title{RapidRicker}
 \usage{
-RapidRicker(sr_obj_m, min.obs = 10, trace = TRUE, flags = NULL)
+RapidRicker(
+  sr_obj_m,
+  min.obs = 10,
+  trace = TRUE,
+  flags = NULL,
+  data.check = TRUE,
+  bm.test = TRUE
+)
 }
 \arguments{
 \item{sr_obj_m}{a data frame with Stock, Year and Spn, logRpS (Data for multiple stocks!). Other variables can be there but are not used (RpS, Qual, ExpF etc).}
@@ -14,6 +21,10 @@ RapidRicker(sr_obj_m, min.obs = 10, trace = TRUE, flags = NULL)
 \item{trace}{if TRUE, print various intermediate diagnostic output to the console}
 
 \item{flags}{a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged. Labels have to match the criteria used in the function(LIST). If flags = NULL, then it uses the built-in object flags_default.}
+
+\item{data.check}{if TRUE, do the data check (either data.check or bm.test or both must be true!)}
+
+\item{bm.test}{if TRUE, do the benchmark sensitivity tests (either data.check or bm.test or both must be true!)}
 }
 \description{
 This function is a wrapper for testDetRickerBM(). It loops throug multiple stocks and applies all the sensitivity test variations, then calculates the perc differences to base case. For calculation details, refer to calcDetRickerBM and testDetRickerBM.
