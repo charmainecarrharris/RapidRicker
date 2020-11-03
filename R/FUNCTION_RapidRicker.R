@@ -5,13 +5,15 @@
 #' @param min.obs min number of S-R pairs needed to fit a model
 #' @param trace if TRUE, print various intermediate diagnostic output to the console
 #' @param flags a data frame with Label, Lower, Upper. Lower and Upper define the triggers for values to be flagged. Labels have to match the criteria used in the function(LIST). If flags = NULL, then it uses the built-in object flags_default.
+#' @param data.check if TRUE, do the data check (either data.check or bm.test or both must be true!)
+#' @param bm.test  if TRUE, do the benchmark sensitivity tests (either data.check or bm.test or both must be true!)
 #' @keywords sensitivity test
 #' @export
 #' @examples
 #' rapid.ricker.out <- RapidRicker(SR_Sample,min.obs = 10,  trace=FALSE)
 
 
-RapidRicker <- function(sr_obj_m,min.obs = 10, trace = TRUE, flags = NULL){
+RapidRicker <- function(sr_obj_m,min.obs = 10, trace = TRUE, flags = NULL, data.check = TRUE, bm.test = TRUE){
 
 # NEED TO FIX:
 # - how trace = TRUE is handled throughout the subroutine calls
@@ -26,9 +28,9 @@ stk.list <- sort(unique(sr_obj_m$Stock))
 # --------------------------------------------------------------------------
 # Part 0: Run the data check
 
+if(data.check){
+
 if(is.null(flags)){flags <- flags_default}
-
-
 
 # output objects
 data.check.summary <- list(NULL)
@@ -84,11 +86,15 @@ data.check.list <- list(TabSeriesVal = table.series.val,
 						Summary = data.check.summary, Data = data.check.data)
 
 
+} # end if data.check
 
 
+if(bm.test){
 
 #-----------------------------------------------------------------------
 # Part 1: Simple Ricker BM
+
+
 
 bm.cols <- c("n_obs", "ln_a","ln_a_c","a","b","sd","Smax","Seq","Seq.c","Smsy_h","Umsy_h",
              "Smsy_p","Umsy_p")
@@ -303,10 +309,14 @@ diff.list <- list(
                         round((bm.list$Drop2[,-c(1,2)] - bm.list$BaseCase[,-c(1,2)])/bm.list$BaseCase[,-c(1,2)]*100))
 )
 
+} #end if bm.test
 
 
+out.list <- NULL
 
-out.list <- list(Data = data.check.list, BM = bm.list, PercDiff = diff.list)
+if(data.check){ out.list <- c(out.list, data.check.list)}
+if(bm.test){out.list <- c(out.list, BM = bm.list, PercDiff = diff.list)}
+
 
 return(out.list)
 
