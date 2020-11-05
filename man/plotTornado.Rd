@@ -6,6 +6,7 @@
 \usage{
 plotTornado(
   data.df,
+  add.pt = TRUE,
   keep.rank = FALSE,
   add.labels = TRUE,
   xlim = NULL,
@@ -15,6 +16,8 @@ plotTornado(
 }
 \arguments{
 \item{data.df}{a data frame with columns Label, Lower, Mid, Upper}
+
+\item{add.pt}{if = TRUE, data.df needs another column called AddPt with values for an additional point to be plotted}
 
 \item{add.labels}{if = TRUE, data.df needs another column called AddLabel which is added to the plot a labels inside the label axis (e.g. Avg abd as context)}
 
