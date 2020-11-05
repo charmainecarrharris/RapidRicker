@@ -4,11 +4,12 @@
 #' @param data.df  a data frame with columns Label, Lower, Mid, Upper
 #' @param rank default rank is based on range between Upper and Lower. if keep.rank = TRUE, then keep the input order as is. 
 #' @param add.labels if = TRUE, data.df needs another column called AddLabel which is added to the plot a labels inside the label axis (e.g. Avg abd as context)
+#' @param add.pt if = TRUE, data.df needs another column called AddPt with values for an additional point to be plotted
 #' @keywords sensitivity test, plot
 #' @export
 
 
-plotTornado <- function(data.df, keep.rank= FALSE,add.labels = TRUE,xlim = NULL,solid.refline = NULL,dashed.refline = NULL){
+plotTornado <- function(data.df, add.pt = TRUE, keep.rank= FALSE, add.labels = TRUE,xlim = NULL,solid.refline = NULL,dashed.refline = NULL){
 
 
 	if(!keep.rank){data.df <- data.df %>% mutate(Range = Upper - Lower) %>% arrange(-Range)	}
