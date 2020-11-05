@@ -90,6 +90,7 @@ if(n.vals == 0){ # empty plot
 
 
 #' @rdname spark.line
+#' @export
 
 spark.band <- function(x,avg = 4,x.lim = NULL,y.lim = NULL,ref.line = NULL){
 
@@ -126,6 +127,7 @@ spark.band <- function(x,avg = 4,x.lim = NULL,y.lim = NULL,ref.line = NULL){
 
 
 #' @rdname spark.line
+#' @export
 
 spark.text<- function(x,pos=c(5,5),adj=0.5,cex =1,font = 1,col="black"){
 # x is a text string
@@ -136,6 +138,7 @@ text(pos[1],pos[2],labels=x,cex=cex,adj=adj,xpd=NA,font=font,col=col)
 }
 
 #' @rdname spark.line
+#' @export
 
 spark.sep <- function(col="lightblue",lty=1,lwd=2){
 # plots a user-specified horizontal line in the middle of the panel
