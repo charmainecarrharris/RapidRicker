@@ -12,7 +12,7 @@
 plotTornado <- function(data.df, add.pt = TRUE, keep.rank= FALSE, add.labels = TRUE,xlim = NULL,solid.refline = NULL,dashed.refline = NULL){
 
 
-	if(!keep.rank){data.df <- data.df %>% mutate(Range = Upper - Lower) %>% arrange(-Range)	}
+  if(!keep.rank){data.df <- data.df %>% mutate(Range = Upper - Lower) %>% arrange(-Range)	}
 	
   num.units <- dim(data.df)[1]
   tick.loc <- num.units: 1#(num.units - length(data.df) + 1)
@@ -41,6 +41,7 @@ plotTornado <- function(data.df, add.pt = TRUE, keep.rank= FALSE, add.labels = T
   points(data.df$Upper, tick.loc, pch=4, col = "darkblue",cex=0.8)
   points(data.df$Lower, tick.loc, pch=4, col = "darkblue",cex=0.8)
   points(data.df$Mid, tick.loc, pch=19, col = "darkblue")
+ if(add.pt){ points(data.df$AddPt, tick.loc, pch=18, col = "darkblue")}
 
 
 
