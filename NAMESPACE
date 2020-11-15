@@ -2,6 +2,7 @@
 
 export(RapidRicker)
 export(calcDetRickerBM)
+export(calcMCMCRickerBM)
 export(checkSRData)
 export(plotRanking)
 export(plotTornado)
