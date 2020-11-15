@@ -8,6 +8,11 @@
 #' @param mcmc.settings a list with n.chains (2), n.burnin (20000), n.thin (60), and n.samples (50000). Default values in brackets.
 #' @param mcmc.inits a list of lists with inits for each chain. Default is "list(list(tau_R=3, C=1),list(tau_R=7, C=2))"
 #' @param mcmc.priors a list with p.alpha, p.beta, tau_alpha,tau_beta
+#' @param pars.track one of "short" (only track a few key paramters) or "all"
+#' @param output one of "short" (only return summary stats for key parameters in a list object), "post" (also save posterior distribution samples to folder), or "all" (also produce pdf files with standard diagnostic plots)
+#' @param out.path text string specifying  folder. if output is "post" or "all", the generated files will be stored to this folder
+#' @param out.label label use in the output files if output is "post" or "all"
+#' @param mcmc.seed either "default" or an integer giving the random seed for starting MCMC (R2Jags default is 123)
 #' @keywords Ricker fit, Bayesian, MCMC, posterior, Smsy, Smax, Seq, Umsy
 #' @export
 #' @examples
@@ -18,18 +23,22 @@ calcMCMCRickerBM <- function(sr_obj,min.obs=15,
 					mcmc.settings = list(n.chains=2, n.burnin=20000, n.thin=60,n.samples=50000),
 					mcmc.inits = list(list(tau_R=3, C=1),list(tau_R=7, C=2)),
 					mcmc.priors = list(p.alpha = 0,tau_alpha = 0.0001, p.beta = 1, tau_beta = 0.1)
-					
-					
+					pars.track = "short",
+					output = "short"
+					out.path = "MCMC_Out",
+					out.label = "MCMC",
+					mcmc.seed = "default"
 					){
 
 
 # Prep the data
-sr.use  <- sr_obj %>% dplyr::filter(!is.na(Rec),!is.na(Spn))
+sr.use  <- sr_obj %>% dplyr::filter(!is.na(Rec),!is.na(Spn)) # drop incomplete records
 mcmc.data <- list(S = sr.use$Spn, R_Obs = sr.use$Rec, N = dim(sr.use)[1])
 
 
 # Define the model
 mcmc.model <- function(){
+	# adapted from code originally developped by Catherine Michielsens, Sue GRant, and Bronwyn MacDonald.
     for (i in 1:N) {                       #loop over N sample points
       R_Obs[i] ~ dlnorm(logR[i],tau_R)          #likelihood -> predicted value for NA in data set
       logR[i] <- RS[i] +log(S[i])               # calc log(R) - fitted values
@@ -65,45 +74,66 @@ mcmc.model <- function(){
 
 }
 
+if(pars.track == "short"){pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2"))
 
+if(pars.track == "all"){pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
+						"S.eq.c","S.msy.c", "U.msy.c","S.msy.c.80",
+						"S.eq.c2","S.msy.c2", "U.msy.c2","S.msy.c2.80")}
 
 
 # Do the MCMC
 
 tmp.out <- mcmc.sub(data.obj = mcmc.data, 
-                     model.in = mcmc.model, 
-                     inits.in = mcmc.inits, 
-                     settings.in = mcmc.settings ,
-                     pars.to.track.in = c("ln.alpha","beta","sigma","deviance","S.max","S.msy.c"), 
-                     out.label= yr ,prefix=gsub("/","",cu.do), 
-                     DIC.in=FALSE,debug.in=FALSE, save.history.in=FALSE,
-                     tracing.in=FALSE, write.CODA.in=TRUE,
-                     diag.plots.in=FALSE, CODA.diag.in=TRUE,
-                     perc.vec=seq(5,95,by=5),
-					 output.type="default",
-                     out.path="",
-                     mcmc.seed = "default",
-                      )
+                    model.in = mcmc.model, 
+                    inits.in = mcmc.inits, 
+                    settings.in = mcmc.settings ,
+                    pars.to.track.in = pars.track.in, 
+                    out.label= out.label,
+					out.path= out.path,
+					output=output,
+                    mcmc.seed = mcmc.seed,	
+					)
+					
+					# prefix=gsub("/","",cu.do), 					 
+                     #DIC.in=FALSE,debug.in=FALSE, save.history.in=FALSE,
+                     #tracing.in=FALSE, write.CODA.in=TRUE,
+                     #diag.plots.in=FALSE, CODA.diag.in=TRUE,
+                     #perc.vec=seq(5,95,by=5),
 
 
 
-if(FALSE){
+#extract the results
+
+if(pars.track == "short"){
 out.vec <-  c(
 			n_obs = dim(sr.use)[1] ,
-			ln_a = round(as.vector(ricker.lna),3), # need as.vector to fix names in output)
-			ln_a_c = round(as.vector(ricker.lna.c),3),
-			a = round(as.vector(ricker.a),3),
-			b = c(as.vector(ricker.b)),
-			sd = round(as.vector(ricker.sigma),3),
-			Smax = round(as.vector(S.max)),
-			Seq = round(as.vector(S.eq)),
-			Seq.c = round(as.vector(S.eq.c)),
-			Smsy_h = round(as.vector(S.msy.h)),
-			Umsy_h = round(as.vector(U.msy.h),2),
-			Smsy_p = round(as.vector(S.msy.p)),
-			Umsy_p = round(as.vector(U.msy.p),2)
+			ln_a_c = median(tmp.out$ln.alpha.c,na.rm=FALSE),
+			b = median(tmp.out$beta,na.rm=FALSE),
+			sd = median(tmp.out$sigma,na.rm=FALSE),
+			deviance = median(tmp.out$deviance,na.rm=FALSE),
+			Smax = median(tmp.out$S.max,na.rm=FALSE),
+			Smsy_p = median(tmp.out$S.msy.c2,na.rm=FALSE)
 			)
-}
+}  #end if "short"
+
+
+if(pars.track == "all"){
+
+# "ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
+#						"S.eq.c","S.msy.c", "U.msy.c","S.msy.c.80",
+#						"S.eq.c2","S.msy.c2", "U.msy.c2","S.msy.c2.80"
+
+out.vec <-  c(
+			n_obs = dim(sr.use)[1] ,
+			ln_a_c = median(tmp.out$ln.alpha.c,na.rm=FALSE),
+			b = median(tmp.out$beta,na.rm=FALSE),
+			sd = median(tmp.out$sigma,na.rm=FALSE),
+			deviance = median(tmp.out$deviance,na.rm=FALSE),
+			Smax = median(tmp.out$S.max,na.rm=FALSE),
+			Smsy_p = median(tmp.out$S.msy.c2,na.rm=FALSE)
+			)
+}  #end if "all"
+
 
 
 } # if n >= min.obs
