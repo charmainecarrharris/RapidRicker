@@ -22,9 +22,9 @@
 calcMCMCRickerBM <- function(sr_obj,min.obs=15, 
 					mcmc.settings = list(n.chains=2, n.burnin=20000, n.thin=60,n.samples=50000),
 					mcmc.inits = list(list(tau_R=3, C=1),list(tau_R=7, C=2)),
-					mcmc.priors = list(p.alpha = 0,tau_alpha = 0.0001, p.beta = 1, tau_beta = 0.1)
+					mcmc.priors = list(p.alpha = 0,tau_alpha = 0.0001, p.beta = 1, tau_beta = 0.1),
 					pars.track = "short",
-					output = "short"
+					output = "short",
 					out.path = "MCMC_Out",
 					out.label = "MCMC",
 					mcmc.seed = "default"
@@ -33,6 +33,11 @@ calcMCMCRickerBM <- function(sr_obj,min.obs=15,
 
 # Prep the data
 sr.use  <- sr_obj %>% dplyr::filter(!is.na(Rec),!is.na(Spn)) # drop incomplete records
+
+
+
+if(dim(sr.use)[1] >= min.obs){
+
 mcmc.data <- list(S = sr.use$Spn, R_Obs = sr.use$Rec, N = dim(sr.use)[1])
 
 
@@ -74,7 +79,7 @@ mcmc.model <- function(){
 
 }
 
-if(pars.track == "short"){pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2"))
+if(pars.track == "short"){pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2")}
 
 if(pars.track == "all"){pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
 						"S.eq.c","S.msy.c", "U.msy.c","S.msy.c.80",
