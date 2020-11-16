@@ -11,6 +11,7 @@
 #' @param out.path text string specifying  folder. if output is "post" or "all", the generated files will be stored to this folder
 #' @param out.label label use in the output files if output is "post" or "all"
 #' @param mcmc.seed either "default" or an integer giving the random seed for starting MCMC (R2Jags default is 123)
+#' @param tracing if TRUE, diagnostic details for intermediate objects will be printed to the screen for debugging
 #' @keywords R2Jags, MCMC, posterior
 #' @export
 
@@ -20,7 +21,8 @@ doRJAGS <- function(data.obj, model.fn,
 					output = "short",
 					out.path = "MCMC_Out",
 					out.label = "MCMC",
-					mcmc.seed = "default"
+					mcmc.seed = "default",
+					tracing = FALSE
 					){
 					
  					 
@@ -32,24 +34,24 @@ tracing.in <- FALSE  # TRUE while debugging the fn
 if(output == "short"){
 		write.CODA <- FALSE  # write CODA txt files
 		MCMC.plots <- FALSE # create MCMC diagnostic plots (traceplots etc)
-		post.plots <- FALSE   # create plots of the posterior disctributions
+		CODA.plots <- FALSE   # create plots of the posterior disctributions
 		}
 
 if(output == "post"){
 		write.CODA <- FALSE  # write CODA txt files
 		MCMC.plots <- FALSE # create MCMC diagnostic plots (traceplots etc)
-		post.plots <- TRUE   # create plots of the posterior disctributions
+		CODA.plots <- TRUE   # create plots of the posterior disctributions
 		}
 
 if(output == "all"){
 		write.CODA <- TRUE  # write CODA txt files
 		MCMC.plots <- TRUE # create MCMC diagnostic plots (traceplots etc)
-		post.plots <- TRUE   # create plots of the posterior disctributions
+		CODA.plots <- TRUE   # create plots of the posterior disctributions
 		}
 		
 
 start.time <- proc.time()
-print(paste("STARTING MCMC ESTIMATION FOR,", out.label, "-------------------------------------"))
+print(paste("STARTING R2JAGS MCMC ESTIMATION FOR,", out.label, "-------------------------------------"))
 
 if(mcmc.seed!="default"){seed.use <- mcmc.seed}
 if(mcmc.seed=="default"){seed.use <- 123} # this is the default value in R2JAGS
@@ -71,13 +73,6 @@ mcmc.obj <- jags(data=data.obj,
 print(paste("MCMC - r2JAGS took",summary(proc.time()-start.time)["elapsed"]))
 
 
-
-
-########################################
-# REST NOT YET REVISED
-
-
-
 print(paste("STARTING OUTPUT SUMMARY FOR,", out.label, "-------------------------------------"))
 
 
@@ -86,9 +81,9 @@ base.dir <- getwd()
 # output
 MCMCsamples <- mcmc.obj$BUGSoutput$sims.matrix
 MCMCsummary <- mcmc.obj$BUGSoutput$summary
-MCMCsims <- "Not yet implemented for R2jags, because it doesn't have n.sims output in R2jags (as in R2OpenBUGS and R2 WinBUGS)"
 
-if(tracing.in){
+
+if(tracing){
 	print("Output Elements"); print(names(mcmc.obj))
 	print("Model Fit"); print(mcmc.obj$model)
 	print("r2jags BUGS Output Elements"); print(names(mcmc.obj$BUGSoutput))
@@ -99,13 +94,11 @@ if(tracing.in){
 
 start.time <- proc.time()
 
-
 # Save CODA in txt file (if turned on)
-if(write.CODA.in){
-			dir.create(paste(coda.dir,"/",out.path,sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
-			setwd(paste(coda.dir,"/",out.path,sep=""))
-			print(paste(prefix,out.label,"_pars.txt",sep=""))
-			write.table(MCMCsamples,paste(prefix,out.label,"_pars.txt",sep=""))
+if(write.CODA){
+			dir.create(paste(out.path,"/CODA",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
+			setwd(paste(out.path,"/CODA",sep=""))
+			write.table(MCMCsamples,paste(out.label,"_pars.txt",sep=""))
 			setwd(base.dir) 
 			} 
 
@@ -121,9 +114,7 @@ if(!exists("mcmc.samplestats")){
 # save stats from current MCMC run		
 mcmc.samplestats[,] <-  as.matrix(MCMCsummary) # NOTE: INCLUDES JAGS DEFAULT THINNING FOR NOW
 
-if(tracing.in){ print("mcmc.samplestats");print(paste(prefix,out.label)); print(mcmc.samplestats[,])}
-
-
+if(tracing){ print("mcmc.samplestats");print(paste(out.label)); print(mcmc.samplestats[,])}
 
 # create or append an array with the %iles for each tracked variable across chains
 if(!exists("mcmc.percs")){ 
@@ -149,32 +140,30 @@ if(!exists("mcmc.dic")){
 
 mcmc.dic[,] <- c(mcmc.samplestats["deviance","mean"],mcmc.obj$BUGSoutput$pD,mcmc.obj$BUGSoutput$DIC)
 
-if(tracing.in){print("DIC ----");print(mcmc.dic[,])}
+if(tracing){print("DIC ----");print(mcmc.dic[,])}
 
 
 
-if("S" %in% names(data.obj)){spn.tmp <- data.obj$S } 	 # need to check this: should this be na.omit(data.set[,"Spn"])
+if("Spn" %in% names(data.obj)){spn.tmp <- data.obj$Spn } 	 # need to check this: should this be na.omit(data.set[,"Spn"])
 		   
-
 print(paste("Output processing took", summary(proc.time()-start.time)["elapsed"]))	
 
 
 # BUGS JAGS diagnostic plots
 
-if (diag.plots.in){
+if (MCMC.plots){
 
 start.time <- proc.time()
 
 print(paste("STARTING BUGS/JAGS DIAGNOSTICS FOR,", out.label, "-------------------------------------"))
 # NOTE this calculates some diagnostics, and creates a pdf of plots if plotting is turned on
 
-dir.create(paste(out.plots.dir,"/",out.path,sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
+dir.create(paste(out.path,"/PLOTS",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
+setwd(paste(out.path,"/PLOTS",sep="")); 
 
-setwd(paste(out.plots.dir,"/",out.path,sep="")); 
+pdf(paste(out.path,"/PLOTS/DiagnosticPlots.pdf",sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf
 
-pdf(paste(prefix,out.label,"_Diag_plots.pdf",sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf for current pop
-
-plot(mcmc.obj)# basic plot  (SAME FOR BUGS AND JAGS, COULD MERGE)
+plot(mcmc.obj)# basic plot
 
 # plot.jags does not include a density plot like the densplot() in the coda package
 # could just do a hist() here?
@@ -191,27 +180,20 @@ print(paste("JAGS diagnostic plots took", summary(proc.time()-start.time)["elaps
 
 # OUTPUT - CODA
 
-if (CODA.diag.in){
+if (CODA.plots){
 
 start.time <- proc.time()
 
 print(paste("STARTING CODA DIAGNOSTICS FOR,", paste(prefix,out.label), "-------------------------------------"))
 # NOTE this calculates some diagnostics, and creates a pdf of plots if plotting is turned on
 
-dir.create(paste(out.plots.dir,"/",out.path,sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
-setwd(paste(out.plots.dir,"/",out.path,sep=""))
-print("----")
-print(getwd())
-print("----")
-print(paste(prefix,out.label,"CODA_diag_plots.pdf",sep="_"))
+dir.create(paste(out.path,"/CODA_Diagnostics",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
 
-pdf(paste(prefix,out.label,"CODA_diag_plots.pdf",sep="_"),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf for current pop
-
+pdf(paste(out.path,"/CODA_Diagnostics", paste(prefix,out.label,"CODA_diag_plots.pdf",sep="_"),sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf 
 print("starting conversion to coda file")
 
 # convert output to make usable for diagnostics from coda package
 coda.obj1 <- as.mcmc(mcmc.obj$BUGSoutput$sims.matrix) 
-
 
 print("conversion to coda file successful")
 
@@ -239,20 +221,18 @@ print("CREATING OUTPUT OBJECT -------------------------------------")
 
 
 # CREATING OUTPUT LIST OBJECT (ONLY PARTLY IMPLEMENTED FOR NOW)
-out.list <- list(mcmc.call=paste(prefix,out.label,sep="_"),mcmc.settings=unlist(settings.in))
+out.list <- list(mcmc.call=out.label,mcmc.settings=unlist(settings.in))
 
-if(output.type %in% c("short","default","full")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
-					DIC=mcmc.dic,PosteriorSamples=MCMCsims))}
+if(output.type %in% c("short","post","full")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
+					DIC=mcmc.dic))}
 				
-if(output.type %in% c("default","full")){out.list<-c(out.list,list(Data=data.obj))}				
+if(output.type %in% c("post","full")){out.list<-c(out.list,list(Data=data.obj))}				
 				
-if(output.type=="full"){out.list<-c(out.list,list(MCMC.samples=mcmc.samples))}
+if(output.type %in% c("post","full")){out.list<-c(out.list,list(MCMC.samples=mcmc.samples))}
 
 if(output.type=="all"){out.list<-c(out.list,list(MCMC.obj=mcmc.obj))}
 
 return(out.list) # not sure why return is necessary, but have run into error on some computers if return() is not there
-
-
 
 
 
