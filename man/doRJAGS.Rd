@@ -9,7 +9,6 @@ doRJAGS(
   model.fn,
   settings = list(n.chains = 2, n.burnin = 20000, n.thin = 60, n.samples = 50000),
   inits,
-  priors,
   pars.track,
   output = "short",
   out.path = "MCMC_Out",
@@ -26,8 +25,6 @@ doRJAGS(
 \item{settings}{a list with n.chains (2), n.burnin (20000), n.thin (60), and n.samples (50000). Default values in brackets.}
 
 \item{inits}{a list of lists with inits for each chain. Depens on BUGS model}
-
-\item{priors}{a list with prior settings. De[ends on BUGS model}
 
 \item{pars.track}{vector of text strings listing parameters to track. Depends on BUGS model}
 

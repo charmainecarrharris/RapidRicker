@@ -57,15 +57,18 @@ if(pars.track == "all"){pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma
 # Do the MCMC
 
 tmp.out <- doRJAGS(data.obj = mcmc.data, 
-                    model.in = ricker.BUGS, # for details see ?ricker.BUGS
-                    inits.in = mcmc.inits, 
-                    settings.in = mcmc.settings ,
-                    pars.to.track.in = pars.track.in, 
+                    model.fn = ricker.BUGS, # for details see ?ricker.BUGS
+                    inits = mcmc.inits, 
+                    settings = mcmc.settings ,
+                    pars.track = pars.track.in, 
                     out.label= out.label,
 					out.path= out.path,
 					output=output,
                     mcmc.seed = mcmc.seed,	
+					tracing = FALSE
 					)
+					
+
 
 #extract the results
 

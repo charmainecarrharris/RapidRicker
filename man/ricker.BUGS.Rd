@@ -2,12 +2,12 @@
 % Please edit documentation in R/MODEL_ricker_BUGS.R
 \name{ricker.BUGS}
 \alias{ricker.BUGS}
-\title{calcMCMCRickerBM}
+\title{ricker.BUGS}
 \usage{
 ricker.BUGS()
 }
 \description{
-This function is the BUGS version of the Ricker model fit and associated benchmarks it is used inside
+This function is the BUGS version of the Ricker model fit and associated benchmarks. It is used inside
 of calcMCMCRickerBM() which passes it to  doRJAGS(), which is a wrapper for the jags() function from the R2jags package.
-This function has not arguments, because the jags call sets iup the inputs.
+This function has no arguments, because the jags call sets up the inputs.
 }
