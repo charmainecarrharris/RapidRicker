@@ -3,7 +3,7 @@
 #' This function is the BUGS version of the Ricker model fit and associated benchmarks. It is used inside
 #' of calcMCMCRickerBM() which passes it to  doRJAGS(), which is a wrapper for the jags() function from the R2jags package.
 #' This function has no arguments, because the jags call sets up the inputs.
-
+#' @export
 
 ricker.BUGS <- function(){
 	# adapted from code originally developed by Catherine Michielsens, Sue GRant, and Bronwyn MacDonald.
