@@ -26,8 +26,9 @@ doRJAGS <- function(data.obj, model.fn,
 					
  					 
 					 
-tracing.in <- FALSE  # TRUE while debugging the fn
-		perc.vec <- seq(5,95,by=5) # %iles used in the posterior summaries
+
+
+perc.vec <- seq(5,95,by=5) # %iles used in the posterior summaries
 
 
 if(output == "short"){
@@ -220,7 +221,7 @@ print("CREATING OUTPUT OBJECT -------------------------------------")
 
 
 # CREATING OUTPUT LIST OBJECT (ONLY PARTLY IMPLEMENTED FOR NOW)
-out.list <- list(mcmc.call=out.label,mcmc.settings=unlist(settings.in))
+out.list <- list(mcmc.call=out.label,mcmc.settings=unlist(settings))
 
 if(output.type %in% c("short","post","full")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
 					DIC=mcmc.dic))}
