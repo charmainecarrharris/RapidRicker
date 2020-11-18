@@ -19,6 +19,9 @@ benchmarks (Smsy, Smax, Seq, Umsy)
 There is also a wrapper function *RapidRicker()* that applies all of these to a data set with multiple stocks and generates a compact output object with list elements for the data check (summary tables, details), BM estimates, and sensitivity tests (e.g. BM values for each step in the retrospective, and a summary of min/max % diff of the retrospective values compared to the base case with all values).
 
 
+*Update: Basic Bayesian estimates are being added, with the planned option of running them through the R2jags package, the Rstanarm package (with a syntax like R's lm function) or the Rstan package ("traditional" STAN).
+
+
 To get up and running with some examples, follow the *Quick Start* steps below.
 
 
