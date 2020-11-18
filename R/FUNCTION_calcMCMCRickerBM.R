@@ -70,8 +70,8 @@ tmp.out <- doRJAGS(data.obj = mcmc.data,
 					tracing = tracing
 					)
 
-print(names(tmp.out))
-print(head(tmp.out$MCMC.Percentiles))
+#print(names(tmp.out))
+#print(head(tmp.out$MCMC.Percentiles))
 
 
 #extract the results
@@ -79,12 +79,12 @@ print(head(tmp.out$MCMC.Percentiles))
 if(pars.track == "short"){
 out.vec <-  c(
 			n_obs = dim(sr.use)[1] ,
-			ln_a_c = median(tmp.out$ln.alpha.c,na.rm=FALSE),
-			b = median(tmp.out$beta,na.rm=FALSE),
-			sd = median(tmp.out$sigma,na.rm=FALSE),
-			deviance = median(tmp.out$deviance,na.rm=FALSE),
-			Smax = median(tmp.out$S.max,na.rm=FALSE),
-			Smsy_p = median(tmp.out$S.msy.c2,na.rm=FALSE)
+			ln_a_c = tmp.out$MCMC.Percentiles["p50","ln.alpha.c"] ,
+			b = tmp.out$MCMC.Percentiles["p50","beta"] ,
+			sd = tmp.out$MCMC.Percentiles["p50","sigma"],
+			deviance = tmp.out$MCMC.Percentiles["p50","deviance"],
+			Smax = tmp.out$MCMC.Percentiles["p50","S.max"],
+			Smsy_p = tmp.out$MCMC.Percentiles["p50","S.msy.c2"]
 			)
 }  #end if "short"
 
@@ -97,12 +97,12 @@ if(pars.track == "all"){
 
 out.vec <-  c(
 			n_obs = dim(sr.use)[1] ,
-			ln_a_c = median(tmp.out$ln.alpha.c,na.rm=FALSE),
-			b = median(tmp.out$beta,na.rm=FALSE),
-			sd = median(tmp.out$sigma,na.rm=FALSE),
-			deviance = median(tmp.out$deviance,na.rm=FALSE),
-			Smax = median(tmp.out$S.max,na.rm=FALSE),
-			Smsy_p = median(tmp.out$S.msy.c2,na.rm=FALSE)
+			ln_a_c = tmp.out$MCMC.Percentiles["p50","ln.alpha.c"] ,
+			b = tmp.out$MCMC.Percentiles["p50","beta"] ,
+			sd = tmp.out$MCMC.Percentiles["p50","sigma"],
+			deviance = tmp.out$MCMC.Percentiles["p50","deviance"],
+			Smax = tmp.out$MCMC.Percentiles["p50","S.max"],
+			Smsy_p = tmp.out$MCMC.Percentiles["p50","S.msy.c2"]
 			)
 }  #end if "all"
 
