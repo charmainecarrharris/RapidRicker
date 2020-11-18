@@ -41,12 +41,14 @@ if(output == "post"){
 		write.CODA <- FALSE  # write CODA txt files
 		MCMC.plots <- FALSE # create MCMC diagnostic plots (traceplots etc)
 		CODA.plots <- TRUE   # create plots of the posterior disctributions
+		dir.create(paste(out.path,sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
 		}
 
 if(output == "all"){
 		write.CODA <- TRUE  # write CODA txt files
 		MCMC.plots <- TRUE # create MCMC diagnostic plots (traceplots etc)
 		CODA.plots <- TRUE   # create plots of the posterior disctributions
+		dir.create(paste(out.path,sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
 		}
 		
 
