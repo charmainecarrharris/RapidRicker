@@ -218,24 +218,19 @@ print(paste("CODA diagnostic plots took", summary(proc.time()-start.time)["elaps
 print("CREATING OUTPUT OBJECT -------------------------------------")
 
 
-
-
 # CREATING OUTPUT LIST OBJECT (ONLY PARTLY IMPLEMENTED FOR NOW)
 out.list <- list(mcmc.call=out.label,mcmc.settings=unlist(settings))
 
-if(output.type %in% c("short","post","full")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
+if(output %in% c("short","post","full")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
 					DIC=mcmc.dic))}
 				
-if(output.type %in% c("post","full")){out.list<-c(out.list,list(Data=data.obj))}				
+if(output %in% c("post","full")){out.list<-c(out.list,list(Data=data.obj))}				
 				
-if(output.type %in% c("post","full")){out.list<-c(out.list,list(MCMC.samples=mcmc.samples))}
+if(output %in% c("post","full")){out.list<-c(out.list,list(MCMC.samples=mcmc.samples))}
 
-if(output.type=="all"){out.list<-c(out.list,list(MCMC.obj=mcmc.obj))}
+if(output =="all"){out.list<-c(out.list,list(MCMC.obj=mcmc.obj))}
 
-return(out.list) # not sure why return is necessary, but have run into error on some computers if return() is not there
-
-
-
+return(out.list) 
 
 } #end doRJAGS
 
