@@ -14,7 +14,8 @@ calcMCMCRickerBM(
   output = "short",
   out.path = "MCMC_Out",
   out.label = "MCMC",
-  mcmc.seed = "default"
+  mcmc.seed = "default",
+  tracing = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ calcMCMCRickerBM(
 \item{out.label}{label use in the output files if output is "post" or "all"}
 
 \item{mcmc.seed}{either "default" or an integer giving the random seed for starting MCMC (R2Jags default is 123)}
+
+\item{tracing}{if TRUE, diagnostic details for intermediate objects will be printed to the screen for debugging}
 }
 \description{
 This function calculates Ricker Model parameters for spawner-recruit data with a simple linear fit of log(R/S) ~ S implemented with an MCMC using the jags() function from the R2jags package. For details such as model form and variable definitions, refer to \href{https://github.com/SOLV-Code/RapidRicker/wiki/MCMC-Using-R2Jags}{this wiki page}. Note that these are designed as quick fits to support initial exploration of Bayesian posteriors,  to support a pre-screeing of assumptions before setting up a proper model fit. Some standard diagnostics can be part of the output, but the function does NOT do any quality control for you. Also, the default priors and inits may not make sense for your data. There are many tutorials available online for linear model fits and associated diagnostics using R2jags (e.g. \href{http://biometry.github.io/APES//LectureNotes/StatsCafe/Linear_models_jags.html}{here},\href{https://rpubs.com/corey_sparks/30893}{here}, and \href{https://rpubs.com/Niko/332320}{here}).
