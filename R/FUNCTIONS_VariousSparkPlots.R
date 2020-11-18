@@ -10,7 +10,7 @@
 #' @param ref.band   vector with 2 values giving a horizontal band
 #' @param type plot type. default = "l" for lines. other options are ("p" for points, "o" for points and lines)
 #' @param pch plotting character (19 = solid circle)
-#' @param cex = point expansion. default = 0.2 (20% of default)
+#' @param cex = point expansion. default = 0.2 (20 percent of default)
 #' @keywords sparkline
 #' @export
 #' @examples

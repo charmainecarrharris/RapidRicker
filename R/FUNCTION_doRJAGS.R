@@ -5,7 +5,6 @@
 #' @param model.fn a function that defines a BUGS model
 #' @param settings a list with n.chains (2), n.burnin (20000), n.thin (60), and n.samples (50000). Default values in brackets.
 #' @param inits a list of lists with inits for each chain. Depens on BUGS model
-#' @param priors a list with prior settings. De[ends on BUGS model
 #' @param pars.track vector of text strings listing parameters to track. Depends on BUGS model
 #' @param output one of "short" (only return summary stats for tracked parameters in a list object), "post" (also save posterior distribution samples to folder), or "all" (also produce pdf files with standard diagnostic plots)
 #' @param out.path text string specifying  folder. if output is "post" or "all", the generated files will be stored to this folder
@@ -17,7 +16,7 @@
 
 doRJAGS <- function(data.obj, model.fn, 
                     settings = list(n.chains=2, n.burnin=20000, n.thin=60,n.samples=50000) ,
-                    inits, priors, pars.track,
+                    inits, pars.track,
 					output = "short",
 					out.path = "MCMC_Out",
 					out.label = "MCMC",
@@ -144,7 +143,7 @@ if(tracing){print("DIC ----");print(mcmc.dic[,])}
 
 
 
-if("Spn" %in% names(data.obj)){spn.tmp <- data.obj$Spn } 	 # need to check this: should this be na.omit(data.set[,"Spn"])
+if("S" %in% names(data.obj)){spn.tmp <- data.obj$S } 	 # need to check this: should this be na.omit(data.set[,"Spn"])
 		   
 print(paste("Output processing took", summary(proc.time()-start.time)["elapsed"]))	
 
