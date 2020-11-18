@@ -169,7 +169,7 @@ plot(mcmc.obj)# basic plot
 # plot.jags does not include a density plot like the densplot() in the coda package
 # could just do a hist() here?
 
-traceplot(mcmc.obj,ask=FALSE)# traceplot() not in r2OpenBUGS
+R2jags::traceplot(mcmc.obj,ask=FALSE)# traceplot() not in r2OpenBUGS
 
 dev.off(); setwd(base.dir)  # close pdf and return to working folder
 
@@ -190,7 +190,7 @@ print(paste("STARTING CODA DIAGNOSTICS FOR,", paste(out.label), "---------------
 
 dir.create(paste(out.path,"/PLOTS",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
 
-pdf(paste(out.path,"/PLOTS/", paste(out.label,"DiagnosticPlots_CODA.pdf",sep="_"),sep="",width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf 
+pdf(paste(out.path,"/PLOTS/", paste(out.label,"DiagnosticPlots_CODA.pdf",sep="_"),sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf 
 print("starting conversion to coda file")
 
 # convert output to make usable for diagnostics from coda package

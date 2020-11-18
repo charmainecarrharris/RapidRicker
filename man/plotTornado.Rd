@@ -6,7 +6,7 @@
 \usage{
 plotTornado(
   data.df,
-  add.pt = TRUE,
+  add.pt = FALSE,
   keep.rank = FALSE,
   add.labels = TRUE,
   xlim = NULL,
