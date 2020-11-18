@@ -67,7 +67,6 @@ tmp.out <- doRJAGS(data.obj = mcmc.data,
                     mcmc.seed = mcmc.seed,	
 					tracing = FALSE
 					)
-					
 
 
 #extract the results
