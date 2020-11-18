@@ -13,6 +13,7 @@
 #' @param out.path text string specifying  folder. if output is "post" or "all", the generated files will be stored to this folder
 #' @param out.label label use in the output files if output is "post" or "all"
 #' @param mcmc.seed either "default" or an integer giving the random seed for starting MCMC (R2Jags default is 123)
+#' @param tracing if TRUE, diagnostic details for intermediate objects will be printed to the screen for debugging
 #' @keywords Ricker fit, Bayesian, MCMC, posterior, Smsy, Smax, Seq, Umsy
 #' @export
 #' @examples
@@ -27,7 +28,8 @@ calcMCMCRickerBM <- function(sr_obj,min.obs=15,
 					output = "short",
 					out.path = "MCMC_Out",
 					out.label = "MCMC",
-					mcmc.seed = "default"
+					mcmc.seed = "default",
+					tracing = FALSE
 					){
 
 
