@@ -71,6 +71,8 @@ tmp.out <- doRJAGS(data.obj = mcmc.data,
 					)
 
 print(names(tmp.out))
+print(head(tmp.out$MCMC.Percentiles))
+
 
 #extract the results
 
@@ -128,7 +130,7 @@ out.vec <-  c(n_obs = dim(sr.use)[1],
 
 }
 
-return(out.vec)
+return(list(Medians = out.vec, MCMC = tmp.out))
   
 }
 
