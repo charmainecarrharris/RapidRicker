@@ -162,7 +162,7 @@ print(paste("STARTING BUGS/JAGS DIAGNOSTICS FOR,", out.label, "-----------------
 
 dir.create(paste(out.path,"/PLOTS",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
 
-pdf(paste(out.path,"/PLOTS/", paste(out.label,"DiagnosticPlots.pdf",sep="_"),sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf
+pdf(paste(out.path,"/PLOTS/", paste(out.label,"DiagnosticPlots_JAGS.pdf",sep="_"),sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf
 
 plot(mcmc.obj)# basic plot
 
@@ -188,9 +188,9 @@ start.time <- proc.time()
 print(paste("STARTING CODA DIAGNOSTICS FOR,", paste(out.label), "-------------------------------------"))
 # NOTE this calculates some diagnostics, and creates a pdf of plots if plotting is turned on
 
-dir.create(paste(out.path,"/CODA_Diagnostics",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
+dir.create(paste(out.path,"/PLOTS",sep=""),showWarnings=FALSE) # creates directory, if it already exists it does nothing
 
-pdf(paste(out.path,"/CODA_Diagnostics/", paste(out.label,"CODA_diag_plots.pdf",sep="_"),sep=""),width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf 
+pdf(paste(out.path,"/PLOTS/", paste(out.label,"DiagnosticPlots_CODA.pdf",sep="_"),sep="",width=8.5, height=8.5, onefile=TRUE) ; par(mfrow=c(1,1))  # change dir and start pdf 
 print("starting conversion to coda file")
 
 # convert output to make usable for diagnostics from coda package

@@ -9,7 +9,7 @@
 #' @export
 
 
-plotTornado <- function(data.df, add.pt = TRUE, keep.rank= FALSE, add.labels = TRUE,xlim = NULL,solid.refline = NULL,dashed.refline = NULL){
+plotTornado <- function(data.df, add.pt = FALSE, keep.rank= FALSE, add.labels = TRUE,xlim = NULL,solid.refline = NULL,dashed.refline = NULL){
 
 
   if(!keep.rank){data.df <- data.df %>% mutate(Range = Upper - Lower) %>% arrange(-Range)	}
