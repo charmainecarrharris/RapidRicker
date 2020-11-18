@@ -230,6 +230,9 @@ if(output %in% c("post","full")){out.list<-c(out.list,list(MCMC.samples=mcmc.sam
 
 if(output =="all"){out.list<-c(out.list,list(MCMC.obj=mcmc.obj))}
 
+print(names(out.list))
+
+
 return(out.list) 
 
 } #end doRJAGS
