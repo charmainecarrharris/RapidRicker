@@ -138,7 +138,7 @@ out.vec <-  c(n_obs = dim(sr.use)[1],
 		
 perc.vec <- seq(5,95,by=5)		
 perc.df <- as.data.frame(matrix(NA,ncol= length(pars.labels),nrow = length(perc.vec),dimnames = list(
-					paste0("p",perc.vec),  pars.labels )))
+					paste0("p",perc.vec),  pars.labels ))) %>% rownames_to_column()
 perc.diff.df <- perc.df
 tmp.out <- NA
 
