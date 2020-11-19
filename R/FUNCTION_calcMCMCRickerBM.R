@@ -76,11 +76,13 @@ tmp.out <- doRJAGS(data.obj = mcmc.data,
 					)
 
 #print(names(tmp.out))
-#print(head(tmp.out$MCMC.Percentiles))
+print(pars.labels)
+print(head(tmp.out$MCMC.Percentiles))
 
 perc.df <- as.data.frame(tmp.out$MCMC.Percentiles) %>% rownames_to_column()
+
 names(perc.df) <- c("Percentile", pars.labels)
-print(perc.df)
+#print(perc.df)
 
 #extract the results
 
