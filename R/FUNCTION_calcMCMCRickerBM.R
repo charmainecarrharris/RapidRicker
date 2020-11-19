@@ -101,7 +101,7 @@ det.mat <- matrix(det.ricker.bm[common.vals],
              byrow=TRUE)
 
 perc.diff.df <- cbind(Percentile = perc.df[,1],
-      data.frame(round((perc.df[,common.vals]) - det.mat / det.mat *100,2 ))
+      data.frame(round( (perc.df[,common.vals] - det.mat) / det.mat *100,2 ))
 	  )
 
 
