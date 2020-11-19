@@ -88,8 +88,24 @@ names(perc.df) <- c("Percentile", pars.labels)
 
 out.vec <-  c(
 			n_obs = dim(sr.use)[1] ,
-			perc.df %>% dplyr::filter(Percentile == "p50") %>% select(-Percentile)
+			perc.df %>% dplyr::filter(Percentile == "p50") %>% select(-Percentile) %>% unlist()
 			)
+
+
+# calculate perc diff from det estimate
+det.ricker.bm <- calcDetRickerBM(sr.use, min.obs = min.obs) # generates a vector with par and BM est
+common.vals <- intersect(names(det.ricker.bm),names(perc.df))
+det.mat <- matrix(det.ricker.bm[common.vals],
+             nrow= dim(MCMC.test1$Percentiles)[1],
+             ncol = length(common.vals),
+             byrow=TRUE)
+
+perc.diff.df <- cbind(Percentile = perc.df[,1],
+      data.frame(round((perc.df[,common.vals]) - det.m / det.m *100,2 ))
+	  )
+
+
+
 
 
 } # if n >= min.obs
@@ -117,10 +133,11 @@ out.vec <-  c(n_obs = dim(sr.use)[1],
 perc.vec <- seq(5,95,by=5)		
 perc.df <- as.data.frame(matrix(NA,ncol= length(pars.labels) + 1,nrow = length(perc.vec),dimnames = list(
 					paste0("p",perc.vec), pars.labels)))
+perc.diff.df <- perc.df
 
 }
 
-return(list(Medians = out.vec, Percentiles = perc.df, MCMC = tmp.out))
+return(list(Medians = out.vec, Percentiles = perc.df, PercDiff = perc.diff.df,MCMC = tmp.out))
   
 }
 
