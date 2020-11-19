@@ -38,6 +38,19 @@ sr.use  <- sr_obj %>% dplyr::filter(!is.na(Rec),!is.na(Spn)) # drop incomplete r
 
 
 
+# pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2")}
+pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
+						"S.eq.c","S.msy.c", "U.msy.c",
+						"S.eq.c2","S.msy.c2", "U.msy.c2")
+
+pars.labels <- c("ln_a","ln_a_c","b","sd","deviance", "Smax",
+						"Seq.c","Smsy_h", "Umsy_h",
+						"Seq.c2","Smsy_p", "Umsy_p")
+
+
+
+
+
 if(dim(sr.use)[1] >= min.obs){
 
 
@@ -51,14 +64,6 @@ print(mcmc.data)
 
 
 
-# pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2")}
-pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
-						"S.eq.c","S.msy.c", "U.msy.c",
-						"S.eq.c2","S.msy.c2", "U.msy.c2")
-
-pars.labels <- c("ln_a","ln_a_c","b","sd","deviance", "Smax",
-						"Seq.c","Smsy_h", "Umsy_h",
-						"Seq.c2","Smsy_p", "Umsy_p")
 
 
 # Do the MCMC
@@ -95,8 +100,9 @@ out.vec <-  c(
 # calculate perc diff from det estimate
 det.ricker.bm <- calcDetRickerBM(sr.use, min.obs = min.obs) # generates a vector with par and BM est
 common.vals <- intersect(names(det.ricker.bm),names(perc.df))
+
 det.mat <- matrix(det.ricker.bm[common.vals],
-             nrow= dim(MCMC.test1$Percentiles)[1],
+             nrow= dim(perc.df)[1],
              ncol = length(common.vals),
              byrow=TRUE)
 
