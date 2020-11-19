@@ -38,7 +38,12 @@ library(devtools) # Load the devtools package.
 install_github("SOLV-Code/RapidRicker", dependencies = TRUE,
                 build_vignettes = FALSE)
 library(RapidRicker)		
+```
 
+**3 Warnings** will show, letting you that the packages *R2jags*, *coda*, *rstan*, and *rstanarm* have functions with the same name: *traceplot()* and *loo()*. After installing *RapidRicker*, you need to make sure you call these functions explicitly (e.g. ```coda::traceplot()``` rather than just ```traceplot()```).
+
+
+```
 # check the built in data set
 
 ?SR_Sample # opens help file
