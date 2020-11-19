@@ -10,7 +10,6 @@ calcMCMCRickerBM(
   mcmc.settings = list(n.chains = 2, n.burnin = 20000, n.thin = 60, n.samples = 50000),
   mcmc.inits = list(list(tau_R = 3, C = 1), list(tau_R = 7, C = 2)),
   mcmc.priors = list(p.alpha = 0, tau_alpha = 1e-04, p.beta = 1, tau_beta = 0.1),
-  pars.track = "short",
   output = "short",
   out.path = "MCMC_Out",
   out.label = "MCMC",
@@ -28,8 +27,6 @@ calcMCMCRickerBM(
 \item{mcmc.inits}{a list of lists with inits for each chain. Default is "list(list(tau_R=3, C=1),list(tau_R=7, C=2))"}
 
 \item{mcmc.priors}{a list with p.alpha, p.beta, tau_alpha,tau_beta}
-
-\item{pars.track}{one of "short" (only track a few key paramters) or "all"}
 
 \item{output}{one of "short" (only return summary stats for key parameters in a list object), "post" (also save posterior distribution samples to folder), or "all" (also produce pdf files with standard diagnostic plots)}
 

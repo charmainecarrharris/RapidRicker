@@ -6,7 +6,7 @@
 #' @export
 
 ricker.BUGS <- function(){
-	# adapted from code originally developed by Catherine Michielsens, Sue GRant, and Bronwyn MacDonald.
+	# adapted from code originally developed by Catherine Michielsens, Sue Grant, and Bronwyn MacDonald.
     for (i in 1:N) {                       #loop over N sample points
       R_Obs[i] ~ dlnorm(logR[i],tau_R)          #likelihood -> predicted value for NA in data set
       logR[i] <- RS[i] +log(S[i])               # calc log(R) - fitted values
@@ -27,9 +27,12 @@ ricker.BUGS <- function(){
     S.max <- 1 / beta 
     alpha.c <- min(exp(ln.alpha.c),1.0E4)
     S.eq.c <- ln.alpha.c * S.max 
+	
+	# Hilborn Proxy ("_h" in the output from calcDetRickerBM)
     U.msy.c <- ln.alpha.c * (0.5-0.07*ln.alpha.c)
     S.msy.c <- S.eq.c *(0.5-0.07*ln.alpha.c)  
     
+	# Peterman Approximation ("_p" in the output from calcDetRickerBM)
     positive.lna.c <- step(ln.alpha.c)
     ln.alpha.c.nonneg <- ln.alpha.c * positive.lna.c
     S.eq.c2 <- ln.alpha.c.nonneg * S.max 
@@ -37,7 +40,5 @@ ricker.BUGS <- function(){
     U.msy.c2 <- ln.alpha.c.nonneg * peterman.approx.c 
     S.msy.c2 <- U.msy.c2 / beta  
     U.max.c2 <- 1 - 1 / exp(ln.alpha.c.nonneg) 
-    S.msy.c.80 <- S.msy.c *0.80
-    S.msy.c2.80 <- S.msy.c2 *0.80    
 
 }

@@ -8,7 +8,6 @@
 #' @param mcmc.settings a list with n.chains (2), n.burnin (20000), n.thin (60), and n.samples (50000). Default values in brackets.
 #' @param mcmc.inits a list of lists with inits for each chain. Default is "list(list(tau_R=3, C=1),list(tau_R=7, C=2))"
 #' @param mcmc.priors a list with p.alpha, p.beta, tau_alpha,tau_beta
-#' @param pars.track one of "short" (only track a few key paramters) or "all"
 #' @param output one of "short" (only return summary stats for key parameters in a list object), "post" (also save posterior distribution samples to folder), or "all" (also produce pdf files with standard diagnostic plots)
 #' @param out.path text string specifying  folder. if output is "post" or "all", the generated files will be stored to this folder
 #' @param out.label label use in the output files if output is "post" or "all"
@@ -24,7 +23,6 @@ calcMCMCRickerBM <- function(sr_obj,min.obs=15,
 					mcmc.settings = list(n.chains=2, n.burnin=20000, n.thin=60,n.samples=50000),
 					mcmc.inits = list(list(tau_R=3, C=1),list(tau_R=7, C=2)),
 					mcmc.priors = list(p.alpha = 0,tau_alpha = 0.0001, p.beta = 1, tau_beta = 0.1),
-					pars.track = "short",
 					output = "short",
 					out.path = "MCMC_Out",
 					out.label = "MCMC",
@@ -32,6 +30,8 @@ calcMCMCRickerBM <- function(sr_obj,min.obs=15,
 					tracing = FALSE
 					){
 
+
+require(tidyverse)
 
 # Prep the data
 sr.use  <- sr_obj %>% dplyr::filter(!is.na(Rec),!is.na(Spn)) # drop incomplete records
@@ -49,11 +49,16 @@ print(mcmc.data)
 # Define the model
 
 
-if(pars.track == "short"){pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2")}
 
-if(pars.track == "all"){pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
-						"S.eq.c","S.msy.c", "U.msy.c","S.msy.c.80",
-						"S.eq.c2","S.msy.c2", "U.msy.c2","S.msy.c2.80")}
+
+# pars.track.in <- c("ln.alpha.c","beta","sigma","deviance","S.max","S.msy.c2")}
+pars.track.in <- c("ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
+						"S.eq.c","S.msy.c", "U.msy.c",
+						"S.eq.c2","S.msy.c2", "U.msy.c2")
+
+pars.labels <- c("ln_a","ln_a_c","b","sd","deviance", "Smax",
+						"Seq.c","Smsy_h", "Umsy_h",
+						"Seq.c2","Smsy_p", "Umsy_p")
 
 
 # Do the MCMC
@@ -73,39 +78,16 @@ tmp.out <- doRJAGS(data.obj = mcmc.data,
 #print(names(tmp.out))
 #print(head(tmp.out$MCMC.Percentiles))
 
+perc.df <- as.data.frame(tmp.out$MCMC.Percentiles) %>% rownames_to_column(var = Percentile)
+names(perc.df) <- c("Percentile", pars.labels)
+
 
 #extract the results
 
-if(pars.track == "short"){
 out.vec <-  c(
 			n_obs = dim(sr.use)[1] ,
-			ln_a_c = tmp.out$MCMC.Percentiles["p50","ln.alpha.c"] ,
-			b = tmp.out$MCMC.Percentiles["p50","beta"] ,
-			sd = tmp.out$MCMC.Percentiles["p50","sigma"],
-			deviance = tmp.out$MCMC.Percentiles["p50","deviance"],
-			Smax = tmp.out$MCMC.Percentiles["p50","S.max"],
-			Smsy_p = tmp.out$MCMC.Percentiles["p50","S.msy.c2"]
+			perc.df %>% dplyr::filter(Percentile == "p50") %>% select(-Percentile)
 			)
-}  #end if "short"
-
-
-if(pars.track == "all"){
-
-# "ln.alpha","ln.alpha.c","beta","sigma","deviance", "S.max",
-#						"S.eq.c","S.msy.c", "U.msy.c","S.msy.c.80",
-#						"S.eq.c2","S.msy.c2", "U.msy.c2","S.msy.c2.80"
-
-out.vec <-  c(
-			n_obs = dim(sr.use)[1] ,
-			ln_a_c = tmp.out$MCMC.Percentiles["p50","ln.alpha.c"] ,
-			b = tmp.out$MCMC.Percentiles["p50","beta"] ,
-			sd = tmp.out$MCMC.Percentiles["p50","sigma"],
-			deviance = tmp.out$MCMC.Percentiles["p50","deviance"],
-			Smax = tmp.out$MCMC.Percentiles["p50","S.max"],
-			Smsy_p = tmp.out$MCMC.Percentiles["p50","S.msy.c2"]
-			)
-}  #end if "all"
-
 
 
 } # if n >= min.obs
@@ -119,18 +101,24 @@ out.vec <-  c(n_obs = dim(sr.use)[1],
 			a = NA,
 			b = NA,
 			sd = NA,
+			deviance = NA,
 			Smax = NA,
 			Seq = NA,
 			Seq.c = NA,
 			Smsy_h = NA,
 			Umsy_h = NA,
+			Seq.c2 = NA,
 			Smsy_p = NA,
 			Umsy_p = NA
 			)
+		
+perc.vec <- seq(5,95,by=5)		
+perc.df <- as.data.frame(matrix(NA,ncol= length(pars.labels) + 1,nrow = length(perc.vec),dimnames = list(
+					paste0("p",perc.vec), pars.labels)))
 
 }
 
-return(list(Medians = out.vec, MCMC = tmp.out))
+return(list(Medians = out.vec, Percentiles = perc.df, MCMC = tmp.out))
   
 }
 

@@ -222,12 +222,12 @@ print("CREATING OUTPUT OBJECT -------------------------------------")
 # CREATING OUTPUT LIST OBJECT (ONLY PARTLY IMPLEMENTED FOR NOW)
 out.list <- list(mcmc.call=out.label,mcmc.settings=unlist(settings))
 
-if(output %in% c("short","post","full")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
+if(output %in% c("short","post","all")){out.list<-c(out.list,list(SampleStats=mcmc.samplestats, MCMC.Percentiles=mcmc.percs,Conv.Info="TBI",
 					DIC=mcmc.dic))}
 				
-if(output %in% c("post","full")){out.list<-c(out.list,list(Data=data.obj))}				
+if(output %in% c("post","all")){out.list<-c(out.list,list(Data=data.obj))}				
 				
-if(output %in% c("post","full")){out.list<-c(out.list,list(MCMC.samples=mcmc.samples))}
+if(output %in% c("post","all")){out.list<-c(out.list,list(MCMC.samples=mcmc.samples))}
 
 if(output =="all"){out.list<-c(out.list,list(MCMC.obj=mcmc.obj))}
 
