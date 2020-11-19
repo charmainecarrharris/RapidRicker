@@ -46,7 +46,14 @@ install_github("SOLV-Code/RapidRicker", dependencies = TRUE,
 ```
 
 library(RapidRicker)	
-library(tidyverse)	 # not sure why it still needs this. All the other dependencies are loaded fine...
+library(tidyverse)	 
+# It still needs this. 
+# All the other dependencies are loaded fine...
+# This seems to be by design as per
+# https://www.tidyverse.org/blog/2018/06/tidyverse-not-for-packages/
+# 
+
+
 
 # check the built in data set
 
