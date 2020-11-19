@@ -37,13 +37,17 @@ install.packages("devtools") # Install the devtools package
 library(devtools) # Load the devtools package.
 install_github("SOLV-Code/RapidRicker", dependencies = TRUE,
                 build_vignettes = FALSE)
-library(RapidRicker)		
-```
-
-**3 Warnings** will show, letting you that the packages *R2jags*, *coda*, *rstan*, and *rstanarm* have functions with the same name: *traceplot()* and *loo()*. After installing *RapidRicker*, you need to make sure you call these functions explicitly (e.g. ```coda::traceplot()``` rather than just ```traceplot()```).
-
 
 ```
+
+**3 Warnings** will show, letting you know that the packages *R2jags*, *coda*, *rstan*, and *rstanarm* have functions with the same name: *traceplot()* and *loo()*. After installing *RapidRicker*, you need to make sure you call these functions explicitly (e.g. ```coda::traceplot()``` rather than just ```traceplot()```).
+
+
+```
+
+library(RapidRicker)	
+library(tidyverse)	 # not sure why it still needs this. All the other dependencies are loaded fine...
+
 # check the built in data set
 
 ?SR_Sample # opens help file
@@ -66,8 +70,7 @@ head(SR_Sample) # shows the first few rows
 
 ```
 library(RapidRicker)
-library(tidyverse) # not sure why this isn't handled in the dependencies?
-
+library(tidyverse)
 
 # ---------------------------------------------
 # run the wrapper function (all tests, all stocks)
