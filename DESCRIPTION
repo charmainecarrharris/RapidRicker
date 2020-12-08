@@ -8,5 +8,5 @@ Description: Main functions to check the data, calculate benchmarks, and do sens
 License: GNU GENERAL PUBLIC LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: tidyverse, knitr, dplyr
+Imports: tidyverse, dplyr, coda, R2jags, rstan, rstanarm
 RoxygenNote: 7.1.1

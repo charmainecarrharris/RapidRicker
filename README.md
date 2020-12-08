@@ -11,12 +11,15 @@ Development Team: Gottfried Pestal, Charmaine Carr-Harris, Steven Cox-Rogers
 
 For now *RapidRicker* includes 3 functions that work on data for a single stock:
 
-*  *checkSRData()*: calculates a set of diagnostics for the spawner-recruit data. Some apply to the whole series (e.g. the contrast is spawner estimates), while others flag individual observations (e.g. R/S above user-specified plausible upper bound, pointing to a potential data error in either R or S).
+*  *checkSRData()*: calculates a set of diagnostics for the spawner-recruit data. Some apply to the whole series (e.g. the contrast in spawner estimates), while others flag individual observations (e.g. R/S above user-specified plausible upper bound, pointing to a potential data error in either R or S).
 * *calcDetRickerBM()*: fits a simple linear regression to ```log(R/S) ~ S``` and calculates standard biological
 benchmarks (Smsy, Smax, Seq, Umsy)
 * *testDetRickerBM()*: runs jackknife (drop 1), retrospective (gradually add recent data) or reverse retrospective (gradually drop earlier data) variations of the simple Ricker fit.
 
 There is also a wrapper function *RapidRicker()* that applies all of these to a data set with multiple stocks and generates a compact output object with list elements for the data check (summary tables, details), BM estimates, and sensitivity tests (e.g. BM values for each step in the retrospective, and a summary of min/max % diff of the retrospective values compared to the base case with all values).
+
+
+*Update*: Basic Bayesian estimates are being added in the *calcMCMCRickerBM()* function, with the planned option of running them through the R2jags package, the Rstanarm package (with a syntax like R's lm function) or the Rstan package ("traditional" STAN). Depending on speed, these may be incorporated into the overall *RapidRicker()* function call, or stay as a standalone extension.
 
 
 To get up and running with some examples, follow the *Quick Start* steps below.
@@ -34,7 +37,23 @@ install.packages("devtools") # Install the devtools package
 library(devtools) # Load the devtools package.
 install_github("SOLV-Code/RapidRicker", dependencies = TRUE,
                 build_vignettes = FALSE)
-library(RapidRicker)		
+
+```
+
+**3 Warnings** will show, letting you know that the packages *R2jags*, *coda*, *rstan*, and *rstanarm* have functions with the same name: *traceplot()* and *loo()*. After installing *RapidRicker*, you need to make sure you call these functions explicitly (e.g. ```coda::traceplot()``` rather than just ```traceplot()```).
+
+
+```
+
+library(RapidRicker)	
+library(tidyverse)	 
+# It still needs this. 
+# All the other dependencies are loaded fine...
+# This seems to be by design as per
+# https://www.tidyverse.org/blog/2018/06/tidyverse-not-for-packages/
+# 
+
+
 
 # check the built in data set
 
@@ -58,8 +77,7 @@ head(SR_Sample) # shows the first few rows
 
 ```
 library(RapidRicker)
-library(tidyverse) # not sure why this isn't handled in the dependencies?
-
+library(tidyverse)
 
 # ---------------------------------------------
 # run the wrapper function (all tests, all stocks)

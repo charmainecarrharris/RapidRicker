@@ -45,7 +45,7 @@ spark.sep(col = "lightblue", lty = 1, lwd = 2)
 
 \item{pch}{plotting character (19 = solid circle)}
 
-\item{cex}{= point expansion. default = 0.2 (20% of default)}
+\item{cex}{= point expansion. default = 0.2 (20 percent of default)}
 }
 \description{
 These functions generate various minimalist plots that can be combined into a multipanel dashboard. Check the worked examples in \href{https://github.com/SOLV-Code/RapidRicker}{Package ReadMe} for illustrations.
